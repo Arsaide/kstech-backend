@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url="mongodb+srv://artemk2504:123456780a@cluster0.rs23yae.mongodb.net/shop"
+}
+
+
+model product {
+   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+ 
+  name  String?
+  colors String
+  description String
+  price String
+  inAvailability String
+} 
+model admin{
+   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    name String
+    password String
+}
