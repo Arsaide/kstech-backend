@@ -9,7 +9,7 @@ import { LoginDto, RegisterDto } from './auth.dto';
 export class AuthService {
   constructor(private prisma: PrismaService) {}
   async login(dto: LoginDto) {
-    const User = await this.prisma.admin.findOne({
+    const User = await this.prisma.admin.findFirst({
       where: {
         name: dto.name,
       },
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
-    const existingUser = await this.prisma.admin.findOne({
+    const existingUser = await this.prisma.admin.findFirst({
       where: {
         name: dto.name,
       },
