@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UploadedFile,
   UploadedFiles,
   UseInterceptors,
@@ -34,9 +35,9 @@ export class ProductsController {
   }
 
 
-  @Get('get')
+  @Get('getone')
   @UsePipes(new ValidationPipe())
-  get() {
-    return this.productsService.get();
+  getone(@Query('id') id: string) {
+    return this.productsService.getOne(id);
   }
 }

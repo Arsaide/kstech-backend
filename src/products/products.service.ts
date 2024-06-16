@@ -63,8 +63,12 @@ export class ProductsService {
 
     return 'fileName';
   }
-  async get() {
-    const res = await this.prisma.product.findMany();
-    return res;
+  async getOne(id) {
+    const product = await this.prisma.product.findFirst({
+      where:{
+        id:id
+      }
+    });
+    return product;
   }
 }
