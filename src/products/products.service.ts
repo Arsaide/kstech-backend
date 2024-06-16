@@ -29,14 +29,33 @@ function uploadFile(file) {
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
-  async create(file: Multer.File, dto: createDto) {
-    await uploadFile(file);
-    const fileName = `https://faralaer.s3.eu-west-2.amazonaws.com/${file.originalname}`;
-    // await this.prisma.product.create({
-    //   data: dto,
-    // });
+  async create(file: Multer.File[], dto: createDto) {
 
-    return fileName;
+    
+    const uploadPromises = file.map(async (files) => {
+      await uploadFile(files);
+      return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
+    });
+
+    let arr = await Promise.all(uploadPromises);
+
+    console.log(dto);
+    await this.prisma.product.create({
+      data: {
+        name: dto.name,
+        colors: dto.colors,
+        description: dto.description,
+        price: Number(dto.price),
+        inAvailability: dto.inAvailability,
+        category: dto.category,
+        subcategory: dto.subcategory,
+        weight: dto.weight,
+        height: dto.height,
+        imgArr: arr,
+      },
+    });
+
+    return 'fileName';
   }
   async get() {
     const res = await this.prisma.product.findMany();

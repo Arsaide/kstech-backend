@@ -16,12 +16,13 @@ model product {
   name  String?
   colors String
   description String
-  price String
+  price Int
   inAvailability String
   category String
   subcategory String
   weight String
   height String
+  imgArr String[]
 } 
 model admin{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId

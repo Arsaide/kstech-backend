@@ -4,6 +4,7 @@ import {
   Get,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -11,7 +12,7 @@ import {
 import { ProductsService } from './products.service';
 import { createDto } from './product.dto';
 import * as Multer from 'multer';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 
 const multer = Multer({
@@ -26,8 +27,9 @@ const multer = Multer({
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Post('create')
-  @UseInterceptors(FileInterceptor('img', { storage: multer.storage, limits: multer.limits }))
-  create(@UploadedFile() file: Multer.File,dto:createDto) {
+  @UseInterceptors(FilesInterceptor('img', 10, multer))
+  create(@UploadedFiles() file: Multer.File[], @Body() dto:createDto) {
+   
     return this.productsService.create(file,dto)
   }
 
