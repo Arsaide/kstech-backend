@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { generateAccessToken } from 'middleware/generateAccessToken';
 import { LoginDto, RegisterDto } from './auth.dto';
+import verifyToken from 'middleware/verifyToken';
 
 @Injectable()
 export class AuthService {
@@ -48,5 +49,14 @@ export class AuthService {
     return {
       token,
     };
+  }
+  async checkUser(token){
+    const { user } = await verifyToken(token,this.prisma);
+    if (!user) {
+      throw new NotFoundException(
+        'The user with the given identifier was not found.',
+      );
+    }
+    return true
   }
 }

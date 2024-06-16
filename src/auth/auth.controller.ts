@@ -4,6 +4,8 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Get,
+  Query,
 } from '@nestjs/common';
 
 import { LoginDto, RegisterDto } from './auth.dto';
@@ -22,5 +24,12 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
+  }
+  
+  @Get('checkuser')
+  @UsePipes(new ValidationPipe())
+ 
+  getProductsUser(@Query('token') token: string) {
+    return this.authService.checkUser(token);
   }
 }

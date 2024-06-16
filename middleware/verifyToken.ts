@@ -5,7 +5,6 @@ import { PrismaService } from 'src/prisma.service';
 
 async function verifyToken(
   token: string,
-  serves: string,
   prismaService: PrismaService,
 ): Promise<{ user: any; id: string }> {
   try {
