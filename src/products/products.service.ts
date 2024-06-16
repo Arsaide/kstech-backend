@@ -63,6 +63,9 @@ export class ProductsService {
 
     return 'fileName';
   }
+  async change(file: Multer.File[], dto: createDto){
+
+  }
   async getOne(id) {
     const product = await this.prisma.product.findFirst({
       where:{
@@ -70,5 +73,9 @@ export class ProductsService {
       }
     });
     return product;
+  }
+  async get() {
+    const products = await this.prisma.product.findMany();
+    return products;
   }
 }

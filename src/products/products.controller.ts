@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { createDto } from './product.dto';
+import { changeDto, createDto } from './product.dto';
 import * as Multer from 'multer';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
@@ -33,11 +33,20 @@ export class ProductsController {
    
     return this.productsService.create(file,dto)
   }
-
+  @Post('change')
+  @UseInterceptors(FilesInterceptor('img', 10, multer))
+  change(@UploadedFiles() file: Multer.File[], @Body() dto:changeDto ) {
+    
+  }
 
   @Get('getone')
   @UsePipes(new ValidationPipe())
   getone(@Query('id') id: string) {
     return this.productsService.getOne(id);
+  }
+  @Get('get')
+  @UsePipes(new ValidationPipe())
+  get() {
+    return this.productsService.get();
   }
 }

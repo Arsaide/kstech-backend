@@ -14,3 +14,8 @@ export class createDto {
   @IsNumber()
   price: number;
 }
+export class changeDto extends createDto {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}

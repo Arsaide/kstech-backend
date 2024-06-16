@@ -25,7 +25,7 @@ export class AuthController {
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
-  
+ 
   @Get('checkuser')
   @UsePipes(new ValidationPipe())
   getProductsUser(@Query('token') token: string) {
