@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { createDto } from './product.dto';
 import * as Multer from 'multer';
+import verifyToken from 'middleware/verifyToken';
 // import {uploadFile} from "../../middleware/create"
 require('dotenv').config();
 const fs = require('fs');
@@ -30,8 +31,13 @@ function uploadFile(file) {
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
   async create(file: Multer.File[], dto: createDto) {
+    const { user } = await verifyToken(dto.token,this.prisma);
+    if (!user) {
+      throw new NotFoundException(
+        'The user with the given identifier was not found.',
+      );
+    }
 
-    
     const uploadPromises = file.map(async (files) => {
       await uploadFile(files);
       return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;

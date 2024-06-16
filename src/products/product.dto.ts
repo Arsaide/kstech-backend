@@ -5,12 +5,12 @@ export class createDto {
   name: string;
   colors: string;
   description: string;
-
   inAvailability: string;
   category: string;
   subcategory: string;
   weight: string;
   height: string;
+  token: string;
   @IsNumber()
   price: number;
 }
