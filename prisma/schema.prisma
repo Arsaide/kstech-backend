@@ -12,13 +12,16 @@ datasource db {
 
 
 model product {
-   id      String   @id @default(auto()) @map("_id") @db.ObjectId
- 
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
   name  String?
   colors String
   description String
   price String
   inAvailability String
+  category String
+  subcategory String
+  weight String
+  height String
 } 
 model admin{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId
