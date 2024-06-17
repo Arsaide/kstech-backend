@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { createDto } from './product.dto';
+import { changeDto, createDto } from './product.dto';
 import * as Multer from 'multer';
 import verifyToken from 'middleware/verifyToken';
 // import {uploadFile} from "../../middleware/create"
@@ -27,11 +27,18 @@ function uploadFile(file) {
   };
   return s3.upload(params).promise();
 }
+function deleteFile(fileName) {
+  const params = {
+    Bucket: bucketName,
+    Key: fileName,
+  };
+  return s3.deleteObject(params).promise();
+}
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
   async create(file: Multer.File[], dto: createDto) {
-    const { user } = await verifyToken(dto.token,this.prisma);
+    const { user } = await verifyToken(dto.token, this.prisma);
     if (!user) {
       throw new NotFoundException(
         'The user with the given identifier was not found.',
@@ -61,16 +68,53 @@ export class ProductsService {
       },
     });
 
-    return 'fileName';
+    return 'all good';
   }
-  async change(file: Multer.File[], dto: createDto){
+  async change(file: Multer.File[], dto: changeDto) {
+    const { user } = await verifyToken(dto.token, this.prisma);
+    if (!user) {
+      throw new NotFoundException(
+        'The user with the given identifier was not found.',
+      );
+    }
+    const filesImg = await this.prisma.product.findFirst({
+      where: { id: dto.id },
+    });
+    const deletePromises = filesImg.imgArr.map(async (url) => {
+      const fileName = url.split('/').pop(); // Extracts the filename from the URL
+      await deleteFile(fileName);
+    });
+    await Promise.all(deletePromises);
+    const uploadPromises = file.map(async (files) => {
+      await uploadFile(files);
+      return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
+    });
 
+    let arr = await Promise.all(uploadPromises);
+
+    await this.prisma.product.update({
+      where: { id: dto.id },
+      data: {
+        name: dto.name,
+        colors: dto.colors,
+        description: dto.description,
+        price: Number(dto.price),
+        inAvailability: dto.inAvailability,
+        category: dto.category,
+        subcategory: dto.subcategory,
+        weight: dto.weight,
+        height: dto.height,
+        imgArr: arr,
+      },
+    });
+
+    return 'all good';
   }
   async getOne(id) {
     const product = await this.prisma.product.findFirst({
-      where:{
-        id:id
-      }
+      where: {
+        id: id,
+      },
     });
     return product;
   }

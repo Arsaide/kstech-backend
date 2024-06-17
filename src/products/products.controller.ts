@@ -36,7 +36,7 @@ export class ProductsController {
   @Post('change')
   @UseInterceptors(FilesInterceptor('img', 10, multer))
   change(@UploadedFiles() file: Multer.File[], @Body() dto:changeDto ) {
-    
+    return this.productsService.change(file,dto)
   }
 
   @Get('getone')
