@@ -122,4 +122,25 @@ export class ProductsService {
     const products = await this.prisma.product.findMany();
     return products;
   }
+  async delete(id,token) {
+    const { user } = await verifyToken(token, this.prisma);
+    if (!user) {
+      throw new NotFoundException(
+        'The user with the given identifier was not found.',
+      );
+    }
+    const filesImg = await this.prisma.product.findFirst({
+      where: { id:id },
+    });
+    const deletePromises = filesImg.imgArr.map(async (url) => {
+      const fileName = url.split('/').pop(); // Extracts the filename from the URL
+      await deleteFile(fileName);
+    });
+    await Promise.all(deletePromises);
+    await this.prisma.product.delete({
+      where: {
+        id: id,
+      },
+    });
+  }
 }

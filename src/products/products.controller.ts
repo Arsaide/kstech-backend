@@ -49,4 +49,9 @@ export class ProductsController {
   get() {
     return this.productsService.get();
   }
+  @Get('delete')
+  @UsePipes(new ValidationPipe())
+  delete(@Query('id') id: string,@Query('token') token: string) {
+    return this.productsService.delete(id, token);
+  }
 }
