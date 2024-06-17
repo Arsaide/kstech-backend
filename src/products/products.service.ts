@@ -121,7 +121,7 @@ export class ProductsService {
   async get(page: number) {
     const products = await this.prisma.product.findMany({
       take: 10,
-      skip: (page - 1) * 20,
+      skip: (page - 1) * 10,
     });
     return products;
   }
