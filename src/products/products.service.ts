@@ -119,11 +119,21 @@ export class ProductsService {
     return product;
   }
   async get(page: number) {
-    const products = await this.prisma.product.findMany({
-      take: 10,
-      skip: (page - 1) * 10,
-    });
-    return products;
+    const [totalProducts, products] = await Promise.all([
+      this.prisma.product.count(),
+      this.prisma.product.findMany({
+        take: 10,
+        skip: (page - 1) * 10,
+      }),
+    ]);
+  
+    const productsPerPage = 10;
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+  
+    return {
+      products,
+      totalPages,
+    };
   }
   async delete(id, token) {
     const { user } = await verifyToken(token, this.prisma);
