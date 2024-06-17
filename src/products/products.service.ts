@@ -27,13 +27,7 @@ function uploadFile(file) {
   };
   return s3.upload(params).promise();
 }
-function deleteFile(fileName) {
-  const params = {
-    Bucket: bucketName,
-    Key: fileName,
-  };
-  return s3.deleteObject(params).promise();
-}
+
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
@@ -77,14 +71,7 @@ export class ProductsService {
         'The user with the given identifier was not found.',
       );
     }
-    const filesImg = await this.prisma.product.findFirst({
-      where: { id: dto.id },
-    });
-    const deletePromises = filesImg.imgArr.map(async (url) => {
-      const fileName = url.split('/').pop(); // Extracts the filename from the URL
-      await deleteFile(fileName);
-    });
-    await Promise.all(deletePromises);
+   
     const uploadPromises = file.map(async (files) => {
       await uploadFile(files);
       return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
