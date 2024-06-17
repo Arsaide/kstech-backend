@@ -132,15 +132,8 @@ export class ProductsService {
         'The user with the given identifier was not found.',
       );
     }
-    const filesImg = await this.prisma.product.findFirst({
-      where: { id: id },
-    });
-    const deletePromises = filesImg.imgArr.map(async (url) => {
-      const fileName = url.split('/').pop(); // Extracts the filename from the URL
-      await deleteFile(fileName);
-    });
-    await Promise.all(deletePromises);
-    await this.prisma.product.delete({
+   
+ await this.prisma.product.delete({
       where: {
         id: id,
       },
