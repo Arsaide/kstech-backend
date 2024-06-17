@@ -46,8 +46,8 @@ export class ProductsController {
   }
   @Get('get')
   @UsePipes(new ValidationPipe())
-  get() {
-    return this.productsService.get();
+  get(@Query('page') page: number) {
+    return this.productsService.get(page);
   }
   @Get('delete')
   @UsePipes(new ValidationPipe())

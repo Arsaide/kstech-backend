@@ -118,11 +118,14 @@ export class ProductsService {
     });
     return product;
   }
-  async get() {
-    const products = await this.prisma.product.findMany();
+  async get(page: number) {
+    const products = await this.prisma.product.findMany({
+      take: 10,
+      skip: (page - 1) * 20,
+    });
     return products;
   }
-  async delete(id,token) {
+  async delete(id, token) {
     const { user } = await verifyToken(token, this.prisma);
     if (!user) {
       throw new NotFoundException(
@@ -130,7 +133,7 @@ export class ProductsService {
       );
     }
     const filesImg = await this.prisma.product.findFirst({
-      where: { id:id },
+      where: { id: id },
     });
     const deletePromises = filesImg.imgArr.map(async (url) => {
       const fileName = url.split('/').pop(); // Extracts the filename from the URL
