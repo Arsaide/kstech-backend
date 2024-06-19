@@ -137,6 +137,10 @@ export class ProductsService {
 			totalPages,
 		}
 	}
+  async search(page:string,query:string){
+
+  }
+   
 	async delete(id, token) {
 		const {user} = await verifyToken(token, this.prisma)
 		if (!user) {

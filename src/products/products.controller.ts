@@ -31,7 +31,7 @@ export class ProductsController {
     return this.productsService.create(file, dto);
   }
   @Post('change')
-  @UseInterceptors(FilesInterceptor('img', 10, multer))
+  @UseInterceptors(FilesInterceptor('imgArr', 10, multer))
   change(@UploadedFiles() file: Multer.File[], @Body() dto: changeDto) {
     return this.productsService.change(file, dto);
   }
