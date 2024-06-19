@@ -14,7 +14,7 @@ datasource db {
 model product {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   name  String?
-  colors String
+  colors String[]
   description String
   price Int
   inAvailability String
@@ -23,6 +23,10 @@ model product {
   weight String
   height String
   imgArr String[]
+  article Int
+  deliveryMethod String
+  paymentMethod String
+  turningMethod String
 } 
 model admin{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId

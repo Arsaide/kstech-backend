@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { changeDto, createDto } from './product.dto';
 import * as Multer from 'multer';
 import verifyToken from 'middleware/verifyToken';
+import generateUniqueArticle from 'middleware/generateartcile';
 // import {uploadFile} from "../../middleware/create"
 require('dotenv').config();
 const fs = require('fs');
@@ -27,13 +28,13 @@ function uploadFile(file) {
   };
   return s3.upload(params).promise();
 }
-function deleteFile(fileName) {
-  const params = {
-    Bucket: bucketName,
-    Key: fileName,
-  };
-  return s3.deleteObject(params).promise();
-}
+// function deleteFile(fileName) {
+//   const params = {
+//     Bucket: bucketName,
+//     Key: fileName,
+//   };
+//   return s3.deleteObject(params).promise();
+// }
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
@@ -50,8 +51,8 @@ export class ProductsService {
       return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
     });
 
-    let arr = await Promise.all(uploadPromises);
-
+    const arr = await Promise.all(uploadPromises);
+    const article=generateUniqueArticle()
     console.log(dto);
     await this.prisma.product.create({
       data: {
@@ -65,6 +66,10 @@ export class ProductsService {
         weight: dto.weight,
         height: dto.height,
         imgArr: arr,
+        paymentMethod:dto.paymentMethod,
+        turningMethod:dto.turningMethod,
+        deliveryMethod:dto.deliveryMethod,
+        article:Number(article)
       },
     });
 
@@ -77,14 +82,14 @@ export class ProductsService {
         'The user with the given identifier was not found.',
       );
     }
-  
+
     const uploadPromises = file.map(async (files) => {
       await uploadFile(files);
       return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
     });
 
-    let arr = await Promise.all(uploadPromises);
-
+    const arr = await Promise.all(uploadPromises);
+    
     await this.prisma.product.update({
       where: { id: dto.id },
       data: {
@@ -98,6 +103,10 @@ export class ProductsService {
         weight: dto.weight,
         height: dto.height,
         imgArr: arr,
+        deliveryMethod:dto.deliveryMethod,
+  paymentMethod:dto.paymentMethod,
+  turningMethod:dto.turningMethod,
+  article: dto.article
       },
     });
 
@@ -112,14 +121,14 @@ export class ProductsService {
     return product;
   }
   async get(page: number) {
-    const totalProducts = await this.prisma.product.count();;
+    const totalProducts = await this.prisma.product.count();
     const products = await this.prisma.product.findMany({
       take: 10,
       skip: (page - 1) * 10,
     });
     const productsPerPage = 10;
     const totalPages = Math.ceil(totalProducts / productsPerPage);
-  
+
     return {
       products,
       totalPages,
@@ -132,8 +141,8 @@ export class ProductsService {
         'The user with the given identifier was not found.',
       );
     }
-   
- await this.prisma.product.delete({
+
+    await this.prisma.product.delete({
       where: {
         id: id,
       },
