@@ -126,10 +126,10 @@ export class ProductsService {
 	async get(page: number) {
 		const totalProducts = await this.prisma.product.count()
 		const products = await this.prisma.product.findMany({
-			take: 10,
-			skip: (page - 1) * 10,
+			take: 20,
+			skip: (page - 1) * 20,
 		})
-		const productsPerPage = 10
+		const productsPerPage = 20
 		const totalPages = Math.ceil(totalProducts / productsPerPage)
 
 		return {
