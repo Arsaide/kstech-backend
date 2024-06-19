@@ -26,12 +26,12 @@ const multer = Multer({
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Post('create')
-  @UseInterceptors(FilesInterceptor('img', 10, multer))
+  @UseInterceptors(FilesInterceptor('img[]', 10, multer))
   create(@UploadedFiles() file: Multer.File[], @Body() dto: createDto) {
     return this.productsService.create(file, dto);
   }
   @Post('change')
-  @UseInterceptors(FilesInterceptor('imgArr', 10, multer))
+  @UseInterceptors(FilesInterceptor('img', 10, multer))
   change(@UploadedFiles() file: Multer.File[], @Body() dto: changeDto) {
     return this.productsService.change(file, dto);
   }
