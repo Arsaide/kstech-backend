@@ -27,6 +27,7 @@ model product {
   deliveryMethod String
   paymentMethod String
   turningMethod String
+   discounts Int
 } 
 model admin{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId

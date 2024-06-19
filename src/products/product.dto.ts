@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class createDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  colors: string[];
+  colors: string;
   description: string;
   inAvailability: string;
   category: string;
@@ -14,8 +14,10 @@ export class createDto {
   deliveryMethod: string;
   paymentMethod: string;
   turningMethod: string;
+  
   @IsNumber()
   price: number;
+  discounts:number;
  
 }
 export class changeDto extends createDto {
