@@ -35,6 +35,14 @@ function uploadFile(file) {
 //   };
 //   return s3.deleteObject(params).promise();
 // }
+function getFile(fileName) {
+	const params = {
+					Bucket: bucketName,
+					Key: fileName,
+	};
+	return s3.getObject(params).promise().then(data => data.Body);
+}
+
 @Injectable()
 export class ProductsService {
 	constructor(private prisma: PrismaService) {}
@@ -109,7 +117,7 @@ export class ProductsService {
 				paymentMethod: dto.paymentMethod,
 				turningMethod: dto.turningMethod,
 				article: Number(dto.article),
-        discounts:Number(dto.discounts)
+    discounts:Number(dto.discounts)
 			},
 		})
 
@@ -121,8 +129,29 @@ export class ProductsService {
 				id: id,
 			},
 		})
-		return product
-	}
+		if (!product) {
+			throw new NotFoundException(
+							"The product with the given identifier was not found."
+			);
+}
+
+const filePromises = product.imgArr.map(async (url) => {
+			const fileName = url.split('/').pop();
+			const file = await getFile(fileName);
+			return {
+							fileName: fileName,
+							file: file,
+			};
+});
+
+const files = await Promise.all(filePromises);
+
+return {
+			...product,
+			files: files,
+};
+}
+
 	async get(page: number) {
 		const totalProducts = await this.prisma.product.count()
 		const products = await this.prisma.product.findMany({
