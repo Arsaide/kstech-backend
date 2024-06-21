@@ -37,10 +37,13 @@ function uploadFile(file) {
 // }
 function getFile(fileName) {
 	const params = {
-					Bucket: bucketName,
-					Key: fileName,
-	};
-	return s3.getObject(params).promise().then(data => data.Body);
+		Bucket: bucketName,
+		Key: fileName,
+	}
+	return s3
+		.getObject(params)
+		.promise()
+		.then((data) => data.Body)
 }
 
 @Injectable()
@@ -79,12 +82,14 @@ export class ProductsService {
 				turningMethod: dto.turningMethod,
 				deliveryMethod: dto.deliveryMethod,
 				article: Number(article),
-        discounts:Number(dto.discounts)
+				discounts: Number(dto.discounts),
 			},
 		})
 
 		return "all good"
 	}
+
+
 	async change(file: Multer.File[], dto: changeDto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
@@ -92,19 +97,22 @@ export class ProductsService {
 				"The user with the given identifier was not found."
 			)
 		}
-
+let oldImgArr = JSON.parse(dto.oldImgArr);
 		const uploadPromises = file.map(async (files) => {
 			await uploadFile(files)
 			return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
 		})
-
+console.log(oldImgArr)
 		const arr = await Promise.all(uploadPromises)
+		
+		let arry=oldImgArr.concat(arr)
+console.log(arry)
 		const colorArr = dto.colors.split(",")
 		await this.prisma.product.update({
 			where: {id: dto.id},
 			data: {
 				name: dto.name,
-				colors: colorArr,
+				colors:colorArr,
 				description: dto.description,
 				price: Number(dto.price),
 				inAvailability: dto.inAvailability,
@@ -112,12 +120,12 @@ export class ProductsService {
 				subcategory: dto.subcategory,
 				weight: dto.weight,
 				height: dto.height,
-				imgArr: arr,
+				imgArr: arry,
 				deliveryMethod: dto.deliveryMethod,
 				paymentMethod: dto.paymentMethod,
 				turningMethod: dto.turningMethod,
 				article: Number(dto.article),
-    discounts:Number(dto.discounts)
+				discounts: Number(dto.discounts),
 			},
 		})
 
@@ -131,26 +139,14 @@ export class ProductsService {
 		})
 		if (!product) {
 			throw new NotFoundException(
-							"The product with the given identifier was not found."
-			);
-}
+				"The product with the given identifier was not found."
+			)
+		}
 
-const filePromises = product.imgArr.map(async (url) => {
-			const fileName = url.split('/').pop();
-			const file = await getFile(fileName);
-			return {
-							fileName: fileName,
-							file: file,
-			};
-});
-
-const files = await Promise.all(filePromises);
-
-return {
-			...product,
-			files: files,
-};
-}
+		return {
+			product,
+		}
+	}
 
 	async get(page: number) {
 		const totalProducts = await this.prisma.product.count()
@@ -166,10 +162,8 @@ return {
 			totalPages,
 		}
 	}
-  async search(page:string,query:string){
+	async search(page: string, query: string) {}
 
-  }
-   
 	async delete(id, token) {
 		const {user} = await verifyToken(token, this.prisma)
 		if (!user) {

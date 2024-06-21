@@ -1,4 +1,5 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 export class createDto {
   @IsString()
   @IsNotEmpty()
@@ -24,6 +25,12 @@ export class changeDto extends createDto {
   @IsString()
   @IsNotEmpty()
   id: string;
+ 
+
   @IsNumber()
   article: number;
+
+ 
+  oldImgArr: string;
+  
 }
