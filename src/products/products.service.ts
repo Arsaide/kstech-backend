@@ -97,7 +97,7 @@ export class ProductsService {
 				"The user with the given identifier was not found."
 			)
 		}
-let oldImgArr = JSON.parse(dto.oldImgArr);
+let oldImgArr = JSON.parse(dto.oldImg);
 		const uploadPromises = file.map(async (files) => {
 			await uploadFile(files)
 			return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`

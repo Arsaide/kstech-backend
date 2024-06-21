@@ -31,6 +31,6 @@ export class changeDto extends createDto {
   article: number;
 
  
-  oldImgArr: string;
+   oldImg: string;
   
 }
