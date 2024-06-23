@@ -173,7 +173,31 @@ console.log(oldImgArr)
 			totalPages,
 		}
 	}
-	async search(page: string, query: string) {}
+	async search(page: string, query: string) {
+		const skip = (parseInt(page) - 1) * 20; // Assuming page starts from 1 and each page shows 10 items
+		const take =  await this.prisma.product.count()
+	
+	
+		const products = await this.prisma.product.findMany({
+		  where: {
+			OR: [
+			  {
+				name: {
+				  contains: query, 
+				},
+			  },
+			  {
+				description: {
+				  contains: query, 
+				},
+			  },
+			],
+		  },
+		  skip,
+		  take,
+		});
+
+	}
 
 	async delete(id, token) {
 		const {user} = await verifyToken(token, this.prisma)
