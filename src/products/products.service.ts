@@ -66,7 +66,7 @@ export class ProductsService {
 		const article = generateUniqueArticle()
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod.split(",")
-		const deliveryMethodArr = dto.deliveryMethod.split(",")
+		// const deliveryMethodArr = dto.deliveryMethod.split(",")
 		
 		await this.prisma.product.create({
 			data: {
@@ -82,7 +82,7 @@ export class ProductsService {
 				imgArr: arr,
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
-				deliveryMethod:  deliveryMethodArr,
+				deliveryMethod:  dto.deliveryMethod,
 				article: Number(article),
 				discount: Number(dto.discount),
 				long:dto.long,
@@ -110,10 +110,13 @@ console.log(oldImgArr)
 		const arr = await Promise.all(uploadPromises)
 		
 		let arry=oldImgArr.concat(arr)
-console.log(arry)
+
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod.split(",")
-		const deliveryMethodArr = dto.deliveryMethod.split(",")
+		// const deliveryMethodArr =JSON.parse(dto.deliveryMethod)
+		console.log(dto.deliveryMethod)
+		console.log(dto.deliveryMethod[2])
+		// console.log( deliveryMethodArr)
 		await this.prisma.product.update({
 			where: {id: dto.id},
 			data: {
@@ -129,7 +132,7 @@ console.log(arry)
 				imgArr: arry,
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
-				deliveryMethod:  deliveryMethodArr,
+				deliveryMethod: dto.deliveryMethod,
 				article: Number(dto.article),
 				discount: Number(dto.discount),
 				long:dto.long,

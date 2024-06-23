@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 export class createDto {
   @IsString()
@@ -12,7 +13,7 @@ export class createDto {
   weight: string;
   height: string;
   token: string;
-  deliveryMethod: string;
+ 
   paymentMethod: string;
   turningMethod: string;
   width:string;
@@ -20,7 +21,9 @@ export class createDto {
     @IsNumber()
   price: number;
   discount:number;
- 
+  @ApiProperty({ type: [String] })
+  deliveryMethod: string[];
+  
 }
 export class changeDto extends createDto {
   @IsString()
