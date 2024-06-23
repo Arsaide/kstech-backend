@@ -24,10 +24,12 @@ model product {
   height String
   imgArr String[]
   article Int
-  deliveryMethod String
-  paymentMethod String
+  deliveryMethod String[]
+  paymentMethod String[]
   turningMethod String
-  discounts Int
+  discount Int
+  long String
+	width String
 } 
 model admin{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId

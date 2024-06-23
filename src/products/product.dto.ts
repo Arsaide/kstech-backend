@@ -15,10 +15,11 @@ export class createDto {
   deliveryMethod: string;
   paymentMethod: string;
   turningMethod: string;
-  
-  @IsNumber()
+  width:string;
+  long:string;
+    @IsNumber()
   price: number;
-  discounts:number;
+  discount:number;
  
 }
 export class changeDto extends createDto {
