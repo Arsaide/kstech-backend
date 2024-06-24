@@ -36,7 +36,11 @@ export class ProductsController {
   change(@UploadedFiles() file: Multer.File[], @Body() dto: changeDto) {
     return this.productsService.change(file, dto);
   }
-
+  @Post('createcategory')
+  @UsePipes(new ValidationPipe())
+  createcategory(@Body() dto) {
+    // return this.productsService.change(file, dto);
+  }
   @Get('getone')
   @UsePipes(new ValidationPipe())
   getone(@Query('id') id: string) {
