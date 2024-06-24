@@ -14,6 +14,7 @@ import { ProductsService } from './products.service';
 import { changeDto, createDto } from './product.dto';
 import * as Multer from 'multer';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+// import { query } from 'express';
 
 const multer = Multer({
   storage: Multer.memoryStorage(),
@@ -40,6 +41,11 @@ export class ProductsController {
   @UsePipes(new ValidationPipe())
   getone(@Query('id') id: string) {
     return this.productsService.getOne(id);
+  }
+  @Get('search')
+  @UsePipes(new ValidationPipe())
+  search(@Query('page')page: string,@Query('query') query: string) {
+    return this.productsService.search(page, query);
   }
   @Get('get')
   @UsePipes(new ValidationPipe())

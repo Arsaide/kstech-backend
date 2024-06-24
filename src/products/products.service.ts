@@ -196,7 +196,7 @@ console.log(oldImgArr)
 		  skip,
 		  take,
 		});
-
+return {products}
 	}
 
 	async delete(id, token) {
