@@ -13,7 +13,7 @@ export class createDto {
   weight: string;
   height: string;
   token: string;
-  paymentMethod: string;
+
   turningMethod: string;
   width:string;
   long:string;
@@ -21,7 +21,8 @@ export class createDto {
   price: number;
   discount:number;
   @ApiProperty({ type: [String] })
-  deliveryMethod: string[];
+  deliveryMethod: string[]; 
+   paymentMethod: string[];
 }
 export class changeDto extends createDto {
   @IsString()

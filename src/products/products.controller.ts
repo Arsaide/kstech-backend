@@ -56,6 +56,11 @@ export class ProductsController {
   getcategory() {
     return this.productsService.getCategory();
   }
+  @Get('getonecategory')
+  @UsePipes(new ValidationPipe())
+  getonecategory(@Query('id') id: string) {
+    return this.productsService.getOneCategory(id);
+  }
   @Get('get')
   @UsePipes(new ValidationPipe())
   get(@Query('page') page: number) {

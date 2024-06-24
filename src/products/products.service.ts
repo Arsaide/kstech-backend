@@ -65,7 +65,7 @@ export class ProductsService {
 		const arr = await Promise.all(uploadPromises)
 		const article = generateUniqueArticle()
 		const colorArr = dto.colors.split(",")
-		const paymentMethodArr = dto.paymentMethod.split(",")
+		const paymentMethodArr = dto.paymentMethod
 		// const deliveryMethodArr = dto.deliveryMethod.split(",")
 
 		await this.prisma.product.create({
@@ -111,8 +111,8 @@ export class ProductsService {
 		let arry = arr.concat(oldImgArr)
 console.log(arry)
 		const colorArr = dto.colors.split(",")
-		const paymentMethodArr = dto.paymentMethod.split(",")
-		// const deliveryMethodArr =JSON.parse(dto.deliveryMethod)
+		const paymentMethodArr = dto.paymentMethod
+	
 		console.log(dto.deliveryMethod)
 		console.log(dto.deliveryMethod[2])
 		// console.log( deliveryMethodArr)
@@ -231,8 +231,12 @@ console.log(arry)
 		const category =await this.prisma.category.findMany()
 		return category
 	}
-	async getOneCategory(){
-		const category =await this.prisma.category.findMany()
+	async getOneCategory(id){
+		const category =await this.prisma.category.findFirst({
+			where: {
+				id: id,
+			},
+		})
 		return category
 	}
 }
