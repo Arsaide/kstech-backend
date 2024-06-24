@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException} from "@nestjs/common"
 import {PrismaService} from "src/prisma.service"
-import {changeDto, createDto} from "./product.dto"
+import {changeDto, createCategoryDto, createDto} from "./product.dto"
 import * as Multer from "multer"
 import verifyToken from "middleware/verifyToken"
 import generateUniqueArticle from "middleware/generateartcile"
@@ -67,7 +67,7 @@ export class ProductsService {
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod.split(",")
 		// const deliveryMethodArr = dto.deliveryMethod.split(",")
-		
+
 		await this.prisma.product.create({
 			data: {
 				name: dto.name,
@@ -82,17 +82,16 @@ export class ProductsService {
 				imgArr: arr,
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
-				deliveryMethod:  dto.deliveryMethod,
+				deliveryMethod: dto.deliveryMethod,
 				article: Number(article),
 				discount: Number(dto.discount),
-				long:dto.long,
-				width:dto.width
+				long: dto.long,
+				width: dto.width,
 			},
 		})
 
 		return "all good"
 	}
-
 
 	async change(file: Multer.File[], dto: changeDto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
@@ -101,15 +100,15 @@ export class ProductsService {
 				"The user with the given identifier was not found."
 			)
 		}
-let oldImgArr = JSON.parse(dto.oldImg);
+		let oldImgArr = JSON.parse(dto.oldImg)
 		const uploadPromises = file.map(async (files) => {
 			await uploadFile(files)
 			return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
 		})
-console.log(oldImgArr)
+		console.log(oldImgArr)
 		const arr = await Promise.all(uploadPromises)
-		
-		let arry=oldImgArr.concat(arr)
+
+		let arry = oldImgArr.concat(arr)
 
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod.split(",")
@@ -121,7 +120,7 @@ console.log(oldImgArr)
 			where: {id: dto.id},
 			data: {
 				name: dto.name,
-				colors:colorArr,
+				colors: colorArr,
 				description: dto.description,
 				price: Number(dto.price),
 				inAvailability: dto.inAvailability,
@@ -135,8 +134,8 @@ console.log(oldImgArr)
 				deliveryMethod: dto.deliveryMethod,
 				article: Number(dto.article),
 				discount: Number(dto.discount),
-				long:dto.long,
-				width:dto.width
+				long: dto.long,
+				width: dto.width,
 			},
 		})
 
@@ -174,29 +173,28 @@ console.log(oldImgArr)
 		}
 	}
 	async search(page: string, query: string) {
-		const skip = (parseInt(page) - 1) * 20; // Assuming page starts from 1 and each page shows 10 items
-		const take =  await this.prisma.product.count()
-	
-	
+		const skip = (parseInt(page) - 1) * 20 // Assuming page starts from 1 and each page shows 10 items
+		const take = await this.prisma.product.count()
+
 		const products = await this.prisma.product.findMany({
-		  where: {
-			OR: [
-			  {
-				name: {
-				  contains: query, 
-				},
-			  },
-			  {
-				description: {
-				  contains: query, 
-				},
-			  },
-			],
-		  },
-		  skip,
-		  take,
-		});
-return {products}
+			where: {
+				OR: [
+					{
+						name: {
+							contains: query,
+						},
+					},
+					{
+						description: {
+							contains: query,
+						},
+					},
+				],
+			},
+			skip,
+			take,
+		})
+		return {products}
 	}
 
 	async delete(id, token) {
@@ -212,5 +210,25 @@ return {products}
 				id: id,
 			},
 		})
+	}
+
+	async createCategory(dto:createCategoryDto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
+		await this.prisma.category.create({
+			data: {
+				name:dto.name,
+				subcategory:[]
+			},
+		})
+		return 'all good'
+	}
+	async getCategory(){
+		const category =await this.prisma.category.findMany()
+		return category
 	}
 }

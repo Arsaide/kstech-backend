@@ -36,3 +36,8 @@ model admin{
     name String
     password String
 }
+model category{
+   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+   name String
+   subcategory String[]
+}

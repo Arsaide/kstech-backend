@@ -13,28 +13,27 @@ export class createDto {
   weight: string;
   height: string;
   token: string;
- 
   paymentMethod: string;
   turningMethod: string;
   width:string;
   long:string;
-    @IsNumber()
+  @IsNumber()
   price: number;
   discount:number;
   @ApiProperty({ type: [String] })
   deliveryMethod: string[];
-  
 }
 export class changeDto extends createDto {
   @IsString()
   @IsNotEmpty()
   id: string;
- 
-
   @IsNumber()
   article: number;
-
- 
-   oldImg: string;
-  
+  oldImg: string;
+}
+export class createCategoryDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+  token:string
 }
