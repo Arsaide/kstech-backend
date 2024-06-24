@@ -109,10 +109,10 @@ export class ProductsService {
 		const arr = await Promise.all(uploadPromises)
 
 		let arry = arr.concat(oldImgArr)
-console.log(arry)
+		console.log(arry)
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod
-	
+
 		console.log(dto.deliveryMethod)
 		console.log(dto.deliveryMethod[2])
 		// console.log( deliveryMethodArr)
@@ -132,7 +132,7 @@ console.log(arry)
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
 				deliveryMethod: dto.deliveryMethod,
-				
+
 				discount: Number(dto.discount),
 				long: dto.long,
 				width: dto.width,
@@ -212,7 +212,7 @@ console.log(arry)
 		})
 	}
 
-	async createCategory(dto:createCategoryDto) {
+	async createCategory(dto: createCategoryDto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
@@ -221,23 +221,29 @@ console.log(arry)
 		}
 		await this.prisma.category.create({
 			data: {
-				name:dto.name,
-				subcategory:[]
+				name: dto.name,
+				subcategory: [],
 			},
 		})
-		return 'all good'
+		return "all good"
 	}
-	async getCategory(){
-		const category =await this.prisma.category.findMany()
+	async getCategory() {
+		const category = await this.prisma.category.findMany()
 		return category
 	}
-	async getOneCategory(id){
-		const category =await this.prisma.category.findFirst({
+	async getOneCategory(id) {
+		const category = await this.prisma.category.findFirst({
 			where: {
 				id: id,
 			},
 		})
 		return category
 	}
-
+	async addSubcategory(dto) {
+		const category = await this.prisma.category.findFirst({
+			where: {
+				id: dto.id,
+			},
+		})
+	}
 }

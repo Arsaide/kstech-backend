@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { changeDto, createCategoryDto, createDto } from './product.dto';
+import { addSubcategory, changeDto, createCategoryDto, createDto } from './product.dto';
 import * as Multer from 'multer';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 // import { query } from 'express';
@@ -70,5 +70,10 @@ export class ProductsController {
   @UsePipes(new ValidationPipe())
   delete(@Query('id') id: string, @Query('token') token: string) {
     return this.productsService.delete(id, token);
+  }
+  @Post('addsubcategory')
+  @UsePipes(new ValidationPipe())
+  addsubcategory(@Body() dto:addSubcategory) {
+    // return this.productsService.createCategory( dto);
   }
 }

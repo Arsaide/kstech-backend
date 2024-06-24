@@ -38,3 +38,8 @@ export class createCategoryDto {
   name: string;
   token:string
 }
+export class addSubcategory extends createCategoryDto  {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}
