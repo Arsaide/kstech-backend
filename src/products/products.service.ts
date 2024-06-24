@@ -100,7 +100,7 @@ export class ProductsService {
 				"The user with the given identifier was not found."
 			)
 		}
-		let oldImgArr = JSON.parse(dto.oldImg)
+		let oldImgArr = dto.oldImg
 		const uploadPromises = file.map(async (files) => {
 			await uploadFile(files)
 			return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
@@ -108,8 +108,8 @@ export class ProductsService {
 		console.log(oldImgArr)
 		const arr = await Promise.all(uploadPromises)
 
-		let arry = oldImgArr.concat(arr)
-
+		let arry = arr.concat(oldImgArr)
+console.log(arry)
 		const colorArr = dto.colors.split(",")
 		const paymentMethodArr = dto.paymentMethod.split(",")
 		// const deliveryMethodArr =JSON.parse(dto.deliveryMethod)
@@ -228,6 +228,10 @@ export class ProductsService {
 		return 'all good'
 	}
 	async getCategory(){
+		const category =await this.prisma.category.findMany()
+		return category
+	}
+	async getOneCategory(){
 		const category =await this.prisma.category.findMany()
 		return category
 	}
