@@ -132,7 +132,7 @@ console.log(arry)
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
 				deliveryMethod: dto.deliveryMethod,
-				article: Number(dto.article),
+				
 				discount: Number(dto.discount),
 				long: dto.long,
 				width: dto.width,
@@ -239,4 +239,5 @@ console.log(arry)
 		})
 		return category
 	}
+
 }
