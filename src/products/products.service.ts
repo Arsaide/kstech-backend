@@ -240,10 +240,17 @@ export class ProductsService {
 		return category
 	}
 	async addSubcategory(dto) {
-		const category = await this.prisma.category.findFirst({
+		const category = await this.prisma.category.update({
 			where: {
 				id: dto.id,
 			},
+			data: {
+				subcategory: {
+				  push: dto.subcategory // добавляем новую подкатегорию в массив
+				}
+			  }
+		  
 		})
+		return 'all good'
 	}
 }
