@@ -44,3 +44,11 @@ export class addSubcategory   {
   id: string;
   subcategory:string;
 }
+export class getForCategoryDto{
+  page:string
+  category:string
+}
+export class getForSubcategoryDto{
+  page:string
+  subcategory:string
+}

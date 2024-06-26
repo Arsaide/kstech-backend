@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException} from "@nestjs/common"
 import {PrismaService} from "src/prisma.service"
-import {changeDto, createCategoryDto, createDto} from "./product.dto"
+import {changeDto, createCategoryDto, createDto} from "./products.dto"
 import * as Multer from "multer"
 import verifyToken from "middleware/verifyToken"
 import generateUniqueArticle from "middleware/generateartcile"
@@ -212,45 +212,25 @@ export class ProductsService {
 		})
 	}
 
-	async createCategory(dto: createCategoryDto) {
-		const {user} = await verifyToken(dto.token, this.prisma)
-		if (!user) {
-			throw new NotFoundException(
-				"The user with the given identifier was not found."
-			)
-		}
-		await this.prisma.category.create({
-			data: {
-				name: dto.name,
-				subcategory: [],
-			},
-		})
-		return "all good"
-	}
-	async getCategory() {
-		const category = await this.prisma.category.findMany()
-		return category
-	}
-	async getOneCategory(id) {
-		const category = await this.prisma.category.findFirst({
+
+	async getForCategory(query) {
+		const products = await this.prisma.product.findMany({
 			where: {
-				id: id,
+				category: query.category,
 			},
+			take: 20,
+			skip: (query.page - 1) * 20,
 		})
-		return category
+		return products
 	}
-	async addSubcategory(dto) {
-		const category = await this.prisma.category.update({
+	async getForSubcategory(query) {
+		const products = await this.prisma.product.findMany({
 			where: {
-				id: dto.id,
+				subcategory: query.subcategory,
 			},
-			data: {
-				subcategory: {
-				  push: dto.subcategory // добавляем новую подкатегорию в массив
-				}
-			  }
-		  
+			take: 20,
+			skip: (query.page - 1) * 20,
 		})
-		return 'all good'
+		return products
 	}
 }
