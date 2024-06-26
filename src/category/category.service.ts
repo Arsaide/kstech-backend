@@ -15,7 +15,7 @@ export class CategoryService {
 		}
 		await this.prisma.category.create({
 			data: {
-				category: dto.name,
+				category: dto.category,
 				subcategory: [],
 			},
 		})
