@@ -15,10 +15,10 @@ export class CategoryController {
 	createcategory(@Body() dto: createCategoryDto) {
 		return this.categoryService.createCategory(dto)
 	}
-  @Get("getcategory")
+  @Get("getcategories")
 	@UsePipes(new ValidationPipe())
-	getcategory() {
-		return this.categoryService.getCategory()
+	getcategories() {
+		return this.categoryService.getCategories()
 	}
   @Get("getonecategory")
 	@UsePipes(new ValidationPipe())

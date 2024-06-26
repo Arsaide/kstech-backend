@@ -21,7 +21,7 @@ export class CategoryService {
 		})
 		return "all good"
 	}
-	async getCategory() {
+	async getCategories() {
 		const category = await this.prisma.category.findMany()
 		return category
 	}
