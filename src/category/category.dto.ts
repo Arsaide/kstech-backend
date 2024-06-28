@@ -12,9 +12,8 @@ export class addSubcategory   {
 	id: string;
 	subcategory:string;
 }
-export class changeCategoryDto{
+export class changeCategoryDto extends createCategoryDto{
 	@IsString()
 	@IsNotEmpty()
 	id: string;
-	category: string;
 }

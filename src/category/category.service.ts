@@ -46,7 +46,14 @@ export class CategoryService {
 		})
 		return "all good"
 	}
+
 	async changeCategory(dto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
 		const category=await this.prisma.category.findFirst({where:{id:dto.id}})
 		await this.prisma.product.updateMany({
 			where: {
@@ -66,4 +73,6 @@ export class CategoryService {
 		})
 		return "all good"
 	}
+
+	async changeSubcategory(dto) {}
 }

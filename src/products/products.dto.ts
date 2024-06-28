@@ -29,7 +29,6 @@ export class changeDto extends createDto {
   @IsNotEmpty()
   id: string;
   @IsNumber()
- 
   oldImg: string;
 }
 export class createCategoryDto {
