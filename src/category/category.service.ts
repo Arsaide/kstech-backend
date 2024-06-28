@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import verifyToken from 'middleware/verifyToken';
-import { PrismaService } from 'src/prisma.service';
-import { createCategoryDto } from './category.dto';
+import {Injectable, NotFoundException} from "@nestjs/common"
+import verifyToken from "middleware/verifyToken"
+import {PrismaService} from "src/prisma.service"
+import {createCategoryDto} from "./category.dto"
 
 @Injectable()
 export class CategoryService {
-  constructor(private prisma: PrismaService) {}
+	constructor(private prisma: PrismaService) {}
 	async createCategory(dto: createCategoryDto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
@@ -54,25 +54,36 @@ export class CategoryService {
 				"The user with the given identifier was not found."
 			)
 		}
-		const category=await this.prisma.category.findFirst({where:{id:dto.id}})
+		const category = await this.prisma.category.findFirst({
+			where: {id: dto.id},
+		})
 		await this.prisma.product.updateMany({
 			where: {
-				subcategory:category.category,
+			category: category.category,
 			},
 			data: {
-				category:dto.category
+				category: dto.newName,
 			},
 		})
-       await this.prisma.category.update({
+		await this.prisma.category.update({
 			where: {
 				id: dto.id,
 			},
 			data: {
-				category:dto.category
+				category: dto.newName,
 			},
 		})
 		return "all good"
 	}
 
-	async changeSubcategory(dto) {}
+	async changeSubcategory(dto) {
+		await this.prisma.product.updateMany({
+			where: {
+				subcategory: category.category,
+			},
+			data: {
+				category: dto.newName,
+			},
+		})
+	}
 }
