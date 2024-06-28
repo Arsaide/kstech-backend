@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { addSubcategory, createCategoryDto } from './category.dto';
+import { addSubcategory, changeCategoryDto, createCategoryDto } from './category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -24,5 +24,11 @@ export class CategoryController {
 	@UsePipes(new ValidationPipe())
 	getonecategory(@Query("id") id: string) {
 		return this.categoryService.getOneCategory(id)
+	}
+
+	@Post("changecategory")
+	@UsePipes(new ValidationPipe())
+	changecategory(@Body() dto: changeCategoryDto) {
+		return this.categoryService.changeCategory(dto)
 	}
 }

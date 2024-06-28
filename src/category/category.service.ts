@@ -46,4 +46,24 @@ export class CategoryService {
 		})
 		return "all good"
 	}
+	async changeCategory(dto) {
+		const category=await this.prisma.category.findFirst({where:{id:dto.id}})
+		await this.prisma.product.updateMany({
+			where: {
+				subcategory:category.category,
+			},
+			data: {
+				category:dto.category
+			},
+		})
+       await this.prisma.category.update({
+			where: {
+				id: dto.id,
+			},
+			data: {
+				category:dto.category
+			},
+		})
+		return "all good"
+	}
 }
