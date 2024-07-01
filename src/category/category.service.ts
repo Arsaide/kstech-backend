@@ -59,7 +59,7 @@ export class CategoryService {
 		})
 		await this.prisma.product.updateMany({
 			where: {
-			category: category.category,
+				category: category.category,
 			},
 			data: {
 				category: dto.newName,
@@ -77,13 +77,39 @@ export class CategoryService {
 	}
 
 	async changeSubcategory(dto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
 		await this.prisma.product.updateMany({
 			where: {
-				subcategory: category.category,
+				subcategory: dto.oldName,
 			},
 			data: {
-				category: dto.newName,
+				subcategory: dto.newName,
 			},
 		})
+		const arr = await this.prisma.category.findFirst({
+			where: {
+				id: dto.id,
+			},
+		})
+
+		const arry = arr.subcategory.map((item) =>
+			item === dto.oldName ? dto.newName : item
+		)
+
+		await this.prisma.category.update({
+			where: {
+				id: dto.id,
+			},
+			data: {
+				subcategory: arry,
+			},
+		})
+
+		return "all good"
 	}
 }
