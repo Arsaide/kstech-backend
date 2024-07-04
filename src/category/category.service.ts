@@ -13,6 +13,14 @@ export class CategoryService {
 				"The user with the given identifier was not found."
 			)
 		}
+		const category = await this.prisma.category.findFirst({
+			where: {
+				category: dto.category,
+			},
+		})
+		if (category) {
+			throw new NotFoundException("this name is taken.")
+		}
 		await this.prisma.category.create({
 			data: {
 				category: dto.category,
@@ -110,6 +118,62 @@ export class CategoryService {
 			},
 		})
 
+		return "all good"
+	}
+
+	async deleteCategory(dto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
+		await this.prisma.product.updateMany({
+			where: {
+				category: dto.category,
+			},
+			data: {
+				category: "",
+				subcategory: "",
+			},
+		})
+		await this.prisma.category.delete({
+			where: {category: dto.category},
+		})
+		return "all good"
+	}
+	async deleteSubcategory(dto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
+		await this.prisma.product.updateMany({
+			where: {
+				subcategory: dto.subcategory,
+			},
+			data: {
+				subcategory: "",
+			},
+		})
+		const arr = await this.prisma.category.findFirst({
+			where: {
+				category: dto.category,
+			},
+		})
+
+		const arry = arr.subcategory.filter((item) => item !== dto.subcategory)
+		console.log(arr)
+		console.log(arry)
+		await this.prisma.category.update({
+			where: {
+				category: dto.category,
+			},
+			data: {
+				subcategory: arry,
+			},
+		})
 		return "all good"
 	}
 }

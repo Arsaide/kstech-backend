@@ -38,6 +38,6 @@ model admin{
 }
 model category{
    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-   category String
+   category String @unique
    subcategory String[]
 }

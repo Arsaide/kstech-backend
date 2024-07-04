@@ -28,3 +28,16 @@ export class changeSubcategoryDto  {
 	oldName:string
 
 }
+export class deleteCategoryDto{
+	@IsString()
+	@IsNotEmpty()
+	category: string;
+	token:string
+}
+export class deleteSubcategoryDto{
+	@IsString()
+	@IsNotEmpty()
+	category: string;
+	subcategory:string;
+	token:string
+}
