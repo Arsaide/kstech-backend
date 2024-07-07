@@ -28,6 +28,7 @@ function uploadFile(file) {
 	}
 	return s3.upload(params).promise()
 }
+
 // function deleteFile(fileName) {
 //   const params = {
 //     Bucket: bucketName,

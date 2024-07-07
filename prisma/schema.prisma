@@ -36,8 +36,18 @@ model admin{
     name String
     password String
 }
-model category{
+
+
+model category {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  category    String        @unique
+  img         String 
+  subcategories Subcategory[]
+}
+model Subcategory {
    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-   category String @unique
-   subcategory String[]
+  subcategory String   @unique
+  img         String
+ category category? @relation(fields:[categoryId] , references: [id])
+ categoryId String?
 }

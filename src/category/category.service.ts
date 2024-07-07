@@ -2,17 +2,23 @@ import {Injectable, NotFoundException} from "@nestjs/common"
 import verifyToken from "middleware/verifyToken"
 import {PrismaService} from "src/prisma.service"
 import {createCategoryDto} from "./category.dto"
+import generateUniqueArticle from "middleware/generateartcile"
+import {uploadFile} from "middleware/saveImg"
 
 @Injectable()
 export class CategoryService {
 	constructor(private prisma: PrismaService) {}
-	async createCategory(dto: createCategoryDto) {
+	async createCategory(file, dto: createCategoryDto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
 				"The user with the given identifier was not found."
 			)
 		}
+
+		const name = generateUniqueArticle()
+
+		uploadFile(file, name)
 		const category = await this.prisma.category.findFirst({
 			where: {
 				category: dto.category,
@@ -24,7 +30,8 @@ export class CategoryService {
 		await this.prisma.category.create({
 			data: {
 				category: dto.category,
-				subcategory: [],
+				img: `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`,
+				subcategories: [],
 			},
 		})
 		return "all good"
@@ -47,8 +54,12 @@ export class CategoryService {
 				id: dto.id,
 			},
 			data: {
-				subcategory: {
-					push: dto.subcategory,
+				subcategories: {
+					create: {
+						subcategory: dto.subcategoryName,
+						img: dto.subcategoryImg,
+				},
+
 				},
 			},
 		})

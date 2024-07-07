@@ -1,7 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { addSubcategory, changeCategoryDto, changeSubcategoryDto, createCategoryDto, deleteCategoryDto, deleteSubcategoryDto } from './category.dto';
-
+import * as Multer from "multer"
+import { FilesInterceptor } from '@nestjs/platform-express';
+const multer = Multer({
+	storage: Multer.memoryStorage(),
+	limits: {
+		fileSize: 5 * 1024 * 1024, // No larger than 5mb
+	},
+})
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -11,9 +18,9 @@ export class CategoryController {
 		return this.categoryService.addSubcategory(dto)
 	}
   @Post("createcategory")
-	@UsePipes(new ValidationPipe())
-	createcategory(@Body() dto: createCategoryDto) {
-		return this.categoryService.createCategory(dto)
+		@UseInterceptors(FilesInterceptor("img[]", 1, multer))
+	createcategory(@UploadedFile() file: Multer.File,@Body() dto: createCategoryDto) {
+		return this.categoryService.createCategory(file, dto)
 	}
   @Get("getcategories")
 	@UsePipes(new ValidationPipe())
