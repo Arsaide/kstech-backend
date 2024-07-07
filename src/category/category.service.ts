@@ -3,7 +3,11 @@ import verifyToken from "middleware/verifyToken"
 import {PrismaService} from "src/prisma.service"
 import {createCategoryDto} from "./category.dto"
 import generateUniqueArticle from "middleware/generateartcile"
-import {uploadFile} from "middleware/saveImg"
+import {deleteFile, uploadFile} from "middleware/saveImg"
+
+
+
+
 
 @Injectable()
 export class CategoryService {
@@ -18,7 +22,7 @@ export class CategoryService {
 
 		const name = generateUniqueArticle()
 
-		uploadFile(file, name)
+		uploadFile(file[0],name)
 		const category = await this.prisma.category.findFirst({
 			where: {
 				category: dto.category,
@@ -31,24 +35,62 @@ export class CategoryService {
 			data: {
 				category: dto.category,
 				img: `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`,
-				subcategories: [],
+				subcategories:{ create: [] },
 			},
 		})
 		return "all good"
 	}
+
+
+
 	async getCategories() {
 		const category = await this.prisma.category.findMany()
 		return category
 	}
+
+	
 	async getOneCategory(id) {
 		const category = await this.prisma.category.findFirst({
 			where: {
 				id: id,
 			},
 		})
-		return category
+		const subcategory = await this.prisma.subcategory.findMany({
+			where: {
+				categoryId : id,
+			},
+		})
+		
+		return {category ,
+			 subcategory};
 	}
-	async addSubcategory(dto) {
+
+
+
+
+	async addSubcategory(file,dto) {
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
+		const subcategory =await this.prisma.subcategory.findFirst({
+			where:{
+				subcategory:dto.subcategory,
+			}
+		})
+ if(subcategory){
+	throw new NotFoundException(
+		"This name is taken."
+	)
+ }
+
+		const name = generateUniqueArticle()
+
+		uploadFile(file[0],name)
+	
+		
 		await this.prisma.category.update({
 			where: {
 				id: dto.id,
@@ -56,8 +98,8 @@ export class CategoryService {
 			data: {
 				subcategories: {
 					create: {
-						subcategory: dto.subcategoryName,
-						img: dto.subcategoryImg,
+						subcategory: dto.subcategory,
+						img: `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`,
 				},
 
 				},
@@ -102,55 +144,69 @@ export class CategoryService {
 				"The user with the given identifier was not found."
 			)
 		}
-		await this.prisma.product.updateMany({
-			where: {
-				subcategory: dto.oldName,
-			},
-			data: {
-				subcategory: dto.newName,
-			},
-		})
-		const arr = await this.prisma.category.findFirst({
-			where: {
-				id: dto.id,
-			},
-		})
-
-		const arry = arr.subcategory.map((item) =>
-			item === dto.oldName ? dto.newName : item
-		)
-
-		await this.prisma.category.update({
-			where: {
-				id: dto.id,
-			},
-			data: {
-				subcategory: arry,
-			},
-		})
+		// await this.prisma.product.updateMany({
+		// 	where: {
+		// 		subcategory: dto.oldName,
+		// 	},
+		// 	data: {
+		// 		subcategory: dto.newName,
+		// 	},
+		// });
+	
+		// // Find the category by id
+		// const category = await this.prisma.category.findUnique({
+		// 	where: {
+		// 		id: dto.id,
+		// 	},
+		// 	include: {
+		// 		subcategories: true,
+		// 	},
+		// });
+	
+		// if (!category) {
+		// 	throw new Error("Category not found.");
+		// }
+	
+		// // Update the subcategories array in the category
+		// const updatedSubcategories = category.subcategories.map((sub) => ({
+		// 	...sub,
+		// 	subcategory: sub.subcategory === dto.oldName ? dto.newName : sub.subcategory,
+		// }));
+	
+		// // Update the category with the new subcategories array
+		// await this.prisma.category.update({
+		// 	where: {
+		// 		id: dto.id,
+		// 	},
+		// 	data: {
+		// 		subcategories: {
+		// 			set: updatedSubcategories,
+		// 		},
+		// 	},
+		// });
 
 		return "all good"
 	}
 
 	async deleteCategory(dto) {
-		const {user} = await verifyToken(dto.token, this.prisma)
-		if (!user) {
-			throw new NotFoundException(
-				"The user with the given identifier was not found."
-			)
-		}
-		await this.prisma.product.updateMany({
-			where: {
-				category: dto.category,
-			},
-			data: {
-				category: "",
-				subcategory: "",
-			},
-		})
-		await this.prisma.category.delete({
-			where: {category: dto.category},
-		})
+		// const {user} = await verifyToken(dto.token, this.prisma)
+		// if (!user) {
+		// 	throw new NotFoundException(
+		// 		"The user with the given identifier was not found."
+		// 	)
+		// }
+		// await this.prisma.product.updateMany({
+		// 	where: {
+		// 		category: dto.category,
+		// 	},
+		// 	data: {
+		// 		category: "",
+		// 		subcategory: "",
+		// 	},
+		// })
+		// await this.prisma.category.delete({
+		// 	where: {category: dto.category},
+		// })
 		return "all good"
 	}
 	async deleteSubcategory(dto) {
@@ -160,7 +216,17 @@ export class CategoryService {
 				"The user with the given identifier was not found."
 			)
 		}
-		await this.prisma.product.updateMany({
+		const subcategory=await this.prisma.subcategory.findFirst({
+			where:{
+				subcategory:dto.subcategory 
+			}
+		})
+  if(!subcategory){
+	throw new NotFoundException(
+		"The subcategory with the given identifier was not found."
+	)
+  }
+  await this.prisma.product.updateMany({
 			where: {
 				subcategory: dto.subcategory,
 			},
@@ -168,23 +234,14 @@ export class CategoryService {
 				subcategory: "",
 			},
 		})
-		const arr = await this.prisma.category.findFirst({
-			where: {
-				category: dto.category,
-			},
+		const url =subcategory.img
+		deleteFile(url)
+		await this.prisma.subcategory.delete({
+			where:{
+				subcategory:dto.subcategory 
+			}
 		})
 
-		const arry = arr.subcategory.filter((item) => item !== dto.subcategory)
-		console.log(arr)
-		console.log(arry)
-		await this.prisma.category.update({
-			where: {
-				category: dto.category,
-			},
-			data: {
-				subcategory: arry,
-			},
-		})
 		return "all good"
 	}
 }

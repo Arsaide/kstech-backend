@@ -16,7 +16,17 @@ const s3 = new S3({
 
 
 
+export function deleteFile(url:string){
+	const parts = url.split('/');
+const name = parts[parts.length - 1]
+  const params = {
+    Bucket: bucketName,
+    Key: name,
+  };
+  return s3.deleteObject(params).promise();
+}
 export function uploadFile(file,name) {
+	console.log(file)
 	const params = {
 		Bucket: bucketName,
 		Key: name,

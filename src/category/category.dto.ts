@@ -9,6 +9,7 @@ export class createCategoryDto {
 export class addSubcategory   {
 	@IsString()
 	@IsNotEmpty()
+	token: string;
 	id: string;
 	subcategory:string;
 }
@@ -37,7 +38,6 @@ export class deleteCategoryDto{
 export class deleteSubcategoryDto{
 	@IsString()
 	@IsNotEmpty()
-	category: string;
 	subcategory:string;
 	token:string
 }
