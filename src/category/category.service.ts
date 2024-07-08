@@ -254,13 +254,14 @@ const subcategory=await this.prisma.subcategory.findMany({
 		categoryId:dto.id
 	}
 })
-// if (subcategory) {
-// 	for(let i=0;i<await subcategory.length;i++){
-// 	deleteFile(subcategory[0].img)
-// }
-// }
-
-// deleteFile(category.img)
+if (subcategory) {
+	for(let i=0;i<await subcategory.length;i++){
+	deleteFile(subcategory[i-1].mainImg)
+	deleteFile(subcategory[i-1].iconimg)
+}
+}
+deleteFile(category.mainImg)
+deleteFile(category.iconimg)
 await this.prisma.subcategory.deleteMany({
 	where:{
 		categoryId:dto.id
