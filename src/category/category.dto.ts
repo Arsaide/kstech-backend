@@ -25,14 +25,12 @@ export class changeSubcategoryDto  {
 	@IsNotEmpty()
 	newName: string;
 	token:string
-	id: string;
 	oldName:string
-
 }
 export class deleteCategoryDto{
 	@IsString()
 	@IsNotEmpty()
-	category: string;
+	id: string;
 	token:string
 }
 export class deleteSubcategoryDto{

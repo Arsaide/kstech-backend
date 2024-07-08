@@ -144,71 +144,76 @@ export class CategoryService {
 				"The user with the given identifier was not found."
 			)
 		}
-		// await this.prisma.product.updateMany({
-		// 	where: {
-		// 		subcategory: dto.oldName,
-		// 	},
-		// 	data: {
-		// 		subcategory: dto.newName,
-		// 	},
-		// });
+		await this.prisma.product.updateMany({
+			where: {
+				subcategory: dto.oldName,
+			},
+			data: {
+				subcategory: dto.newName,
+			},
+		});
+		await this.prisma.subcategory.update({
+			where:{
+				subcategory:dto.oldName
+			},
+			data:{
+				subcategory:dto.newName
+			}
+		})
 	
-		// // Find the category by id
-		// const category = await this.prisma.category.findUnique({
-		// 	where: {
-		// 		id: dto.id,
-		// 	},
-		// 	include: {
-		// 		subcategories: true,
-		// 	},
-		// });
-	
-		// if (!category) {
-		// 	throw new Error("Category not found.");
-		// }
-	
-		// // Update the subcategories array in the category
-		// const updatedSubcategories = category.subcategories.map((sub) => ({
-		// 	...sub,
-		// 	subcategory: sub.subcategory === dto.oldName ? dto.newName : sub.subcategory,
-		// }));
-	
-		// // Update the category with the new subcategories array
-		// await this.prisma.category.update({
-		// 	where: {
-		// 		id: dto.id,
-		// 	},
-		// 	data: {
-		// 		subcategories: {
-		// 			set: updatedSubcategories,
-		// 		},
-		// 	},
-		// });
-
 		return "all good"
 	}
 
 	async deleteCategory(dto) {
-		// const {user} = await verifyToken(dto.token, this.prisma)
-		// if (!user) {
-		// 	throw new NotFoundException(
-		// 		"The user with the given identifier was not found."
-		// 	)
-		// }
-		// await this.prisma.product.updateMany({
-		// 	where: {
-		// 		category: dto.category,
-		// 	},
-		// 	data: {
-		// 		category: "",
-		// 		subcategory: "",
-		// 	},
-		// })
-		// await this.prisma.category.delete({
-		// 	where: {category: dto.category},
-		// })
+		const {user} = await verifyToken(dto.token, this.prisma)
+		if (!user) {
+			throw new NotFoundException(
+				"The user with the given identifier was not found."
+			)
+		}
+		await this.prisma.product.updateMany({
+			where: {
+				category: dto.category,
+			},
+			data: {
+				category: "",
+				subcategory: "",
+			},
+		})
+ const category =await this.prisma.category.findFirst({
+	where:{
+		id:dto.id
+	}
+ })
+ if (!category) {
+	throw new NotFoundException(
+		"category didnt found."
+	)
+}
+const subcategory=await this.prisma.subcategory.findMany({
+	where:{
+		categoryId:dto.id
+	}
+})
+if (subcategory) {
+	for(let i=0;i<await subcategory.length;i++){
+	deleteFile(subcategory[0].img)
+}
+}
+
+deleteFile(category.img)
+await this.prisma.subcategory.deleteMany({
+	where:{
+		categoryId:dto.id
+	}
+})
+		await this.prisma.category.delete({
+			where: {id :dto.id},
+		})
 		return "all good"
 	}
+
+	
 	async deleteSubcategory(dto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
