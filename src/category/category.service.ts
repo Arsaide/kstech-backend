@@ -6,13 +6,28 @@ import generateUniqueArticle from "middleware/generateartcile"
 import {deleteFile, uploadFile} from "middleware/saveImg"
 
 
+interface UpdateSubcategoryDto {
+	iconimg?:string
+	subcategory?: string;
+	mainImg?: string;
+}
 
-
+interface UpdateCategoryDto {
+	iconimg?:string
+	category?: string;
+	mainImg?: string;
+}
+interface IData{
+	img: string |  null;
+    subcategory:string|null
+}
 
 @Injectable()
 export class CategoryService {
 	constructor(private prisma: PrismaService) {}
-	async createCategory(file, dto: createCategoryDto) {
+	async createCategory(files, dto: createCategoryDto) {
+		const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+		const iconimgFile = files.iconimg ? files.iconimg[0] : null;
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
@@ -20,9 +35,10 @@ export class CategoryService {
 			)
 		}
 
-		const name = generateUniqueArticle()
+		const iconimg=uploadFile(iconimgFile)
+	const mainImg=uploadFile(mainImgFile)
 
-		uploadFile(file[0],name)
+		
 		const category = await this.prisma.category.findFirst({
 			where: {
 				category: dto.category,
@@ -34,7 +50,8 @@ export class CategoryService {
 		await this.prisma.category.create({
 			data: {
 				category: dto.category,
-				img: `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`,
+				mainImg: mainImg,
+				iconimg: iconimg,
 				subcategories:{ create: [] },
 			},
 		})
@@ -68,7 +85,9 @@ export class CategoryService {
 
 
 
-	async addSubcategory(file,dto) {
+	async addSubcategory(files,dto) {
+		const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+		const iconimgFile = files.iconimg ? files.iconimg[0] : null;
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
@@ -86,10 +105,10 @@ export class CategoryService {
 	)
  }
 
-		const name = generateUniqueArticle()
+		
 
-		uploadFile(file[0],name)
-	
+		const iconimg=uploadFile(iconimgFile)
+	const mainImg=uploadFile(mainImgFile)
 		
 		await this.prisma.category.update({
 			where: {
@@ -99,7 +118,8 @@ export class CategoryService {
 				subcategories: {
 					create: {
 						subcategory: dto.subcategory,
-						img: `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`,
+						mainImg: mainImg,
+						iconimg: iconimg,
 				},
 
 				},
@@ -108,61 +128,100 @@ export class CategoryService {
 		return "all good"
 	}
 
-	async changeCategory(dto) {
+	async changeCategory(files,dto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
 				"The user with the given identifier was not found."
 			)
 		}
+		let data:UpdateCategoryDto={}
 		const category = await this.prisma.category.findFirst({
-			where: {id: dto.id},
-		})
-		await this.prisma.product.updateMany({
 			where: {
-				category: category.category,
-			},
-			data: {
-				category: dto.newName,
+				id: dto.id
 			},
 		})
+		if(files){
+			const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+			const iconimgFile = files.iconimg ? files.iconimg[0] : null;
+			deleteFile(category.iconimg)
+			deleteFile(category.mainImg)
+			data.iconimg=await uploadFile(iconimgFile)
+			data.mainImg=await uploadFile(mainImgFile)
+		}
+		if (dto.newName) {
+			data.category = dto.newName;
+		  }
+		  if(dto.newName){
+					await this.prisma.product.updateMany({
+					where: {
+						category: category.category,
+					},
+					data:{
+						category:dto.newName
+						
+					}
+				});}
+		
 		await this.prisma.category.update({
 			where: {
 				id: dto.id,
 			},
-			data: {
-				category: dto.newName,
-			},
+			data: data
 		})
 		return "all good"
 	}
 
-	async changeSubcategory(dto) {
+	async changeSubcategory(files,dto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
 				"The user with the given identifier was not found."
 			)
 		}
-		await this.prisma.product.updateMany({
+		let data:UpdateSubcategoryDto={}
+		if(files){
+			
+	const subcategory=await this.prisma.subcategory.findFirst({
+		where:{
+			subcategory: dto.oldName,
+		}
+	})		
+	const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+	const iconimgFile = files.iconimg ? files.iconimg[0] : null;
+	deleteFile(subcategory.iconimg)
+	deleteFile(subcategory.mainImg)
+    data.iconimg=await uploadFile(iconimgFile)
+	data.mainImg=await uploadFile(mainImgFile)
+	
+}	
+  if (dto.newName) {
+    data.subcategory = dto.newName;
+  }
+  if(dto.newName){
+			await this.prisma.product.updateMany({
 			where: {
 				subcategory: dto.oldName,
 			},
-			data: {
-				subcategory: dto.newName,
-			},
+			data:{
+				subcategory:dto.newName
+				
+			}
 		});
+		
+
+		}
 		await this.prisma.subcategory.update({
 			where:{
 				subcategory:dto.oldName
 			},
-			data:{
-				subcategory:dto.newName
-			}
+			data:data
 		})
 	
 		return "all good"
 	}
+
+
 
 	async deleteCategory(dto) {
 		const {user} = await verifyToken(dto.token, this.prisma)
@@ -195,13 +254,13 @@ const subcategory=await this.prisma.subcategory.findMany({
 		categoryId:dto.id
 	}
 })
-if (subcategory) {
-	for(let i=0;i<await subcategory.length;i++){
-	deleteFile(subcategory[0].img)
-}
-}
+// if (subcategory) {
+// 	for(let i=0;i<await subcategory.length;i++){
+// 	deleteFile(subcategory[0].img)
+// }
+// }
 
-deleteFile(category.img)
+// deleteFile(category.img)
 await this.prisma.subcategory.deleteMany({
 	where:{
 		categoryId:dto.id
@@ -239,8 +298,10 @@ await this.prisma.subcategory.deleteMany({
 				subcategory: "",
 			},
 		})
-		const url =subcategory.img
+		const url =subcategory.iconimg
 		deleteFile(url)
+		const url2 =subcategory.mainImg
+		deleteFile(url2)
 		await this.prisma.subcategory.delete({
 			where:{
 				subcategory:dto.subcategory 

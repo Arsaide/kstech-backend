@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseP
 import { CategoryService } from './category.service';
 import { addSubcategory, changeCategoryDto, changeSubcategoryDto, createCategoryDto, deleteCategoryDto, deleteSubcategoryDto } from './category.dto';
 import * as Multer from "multer"
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 const multer = Multer({
 	storage: Multer.memoryStorage(),
 	limits: {
@@ -12,18 +12,32 @@ const multer = Multer({
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
+
   @Post("addsubcategory")
-  @UseInterceptors(FilesInterceptor('img[]', 1, { storage: Multer.memoryStorage() }))
-	addsubcategory(@UploadedFiles() file: Multer.File,@Body() dto: addSubcategory) {
-		return this.categoryService.addSubcategory(file,dto)
-	}
+  @UseInterceptors(
+    FileFieldsInterceptor([
+        { name: 'mainImg', maxCount: 1 },
+        { name: 'iconimg', maxCount: 1 }
+    ], { storage: Multer.memoryStorage() })
+)
+addsubcategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer.File }, @Body() dto: addSubcategory) {
+    return this.categoryService.addSubcategory(files, dto);
+	
+}
+
 	@Post('createcategory')
-	@UseInterceptors(FilesInterceptor('img[]', 1, { storage: Multer.memoryStorage() }))
-	createCategory(@UploadedFiles() file: Multer.File, @Body() dto: createCategoryDto) {
-	  console.log(file); // Выведет информацию о загруженном файле
-	  return this.categoryService.createCategory(file, dto);
+	@UseInterceptors(
+		FileFieldsInterceptor([
+			{ name: 'mainImg', maxCount: 1 },
+			{ name: 'iconimg', maxCount: 1 }
+		], { storage: Multer.memoryStorage() })
+	)
+	createCategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer.File }, @Body() dto: createCategoryDto) {
+
+	  return this.categoryService.createCategory(files, dto);
 	}
-  @Get("getcategories")
+
+    @Get("getcategories")
 	@UsePipes(new ValidationPipe())
 	getcategories() {
 		return this.categoryService.getCategories()
@@ -35,20 +49,34 @@ export class CategoryController {
 	}
 
 	@Post("changecategory")
-	@UsePipes(new ValidationPipe())
-	changecategory(@Body() dto: changeCategoryDto) {
-		return this.categoryService.changeCategory(dto)
+
+	@UseInterceptors(
+		FileFieldsInterceptor([
+			{ name: 'mainImg', maxCount: 1 },
+			{ name: 'iconimg', maxCount: 1 }
+		], { storage: Multer.memoryStorage() })
+	)
+	changecategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconimg?: Multer.File[] },@Body() dto: changeCategoryDto) {
+		return this.categoryService.changeCategory(files,dto)
 	}
 	@Post("changesubcategory")
-	@UsePipes(new ValidationPipe())
-	changesubcategory(@Body() dto: changeSubcategoryDto) {
-		return this.categoryService.changeSubcategory(dto)
+	@UseInterceptors(
+		FileFieldsInterceptor([
+			{ name: 'mainImg', maxCount: 1 },
+			{ name: 'iconimg', maxCount: 1 }
+		], { storage: Multer.memoryStorage() })
+	)
+	changesubcategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconimg?: Multer.File[] }, @Body() dto: changeSubcategoryDto) {
+		
+		return this.categoryService.changeSubcategory(files,dto)
 	}
+
 	@Post("deletecategory")
 	@UsePipes(new ValidationPipe())
 	deletecategory(@Body() dto: deleteCategoryDto) {
 		return this.categoryService.deleteCategory(dto)
 	}
+
 	@Post("deletesubcategory")
 	@UsePipes(new ValidationPipe())
 	deletesubcategory(@Body() dto: deleteSubcategoryDto) {

@@ -16,16 +16,18 @@ export class addSubcategory   {
 export class changeCategoryDto {
 	@IsString()
 	@IsNotEmpty()
- newName: string;
+    newName?: string;
 	token:string
 	id: string;
 }
 export class changeSubcategoryDto  {
 	@IsString()
 	@IsNotEmpty()
-	newName: string;
+	newName?: string;
 	token:string
-	oldName:string
+	oldName:string;
+	
+	img?:string;
 }
 export class deleteCategoryDto{
 	@IsString()

@@ -1,3 +1,5 @@
+import generateUniqueArticle from "./generateartcile"
+
 export {}
 require("dotenv").config()
 // const fs = require("fs")
@@ -25,7 +27,8 @@ const name = parts[parts.length - 1]
   };
   return s3.deleteObject(params).promise();
 }
-export function uploadFile(file,name) {
+export function uploadFile(file) {
+	const name = generateUniqueArticle()
 	console.log(file)
 	const params = {
 		Bucket: bucketName,
@@ -33,5 +36,6 @@ export function uploadFile(file,name) {
 		Body: file.buffer,
 		ContentType: file.mimetype,
 	}
-	return s3.upload(params).promise()
+	 s3.upload(params).promise()
+	 return `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`
 }
