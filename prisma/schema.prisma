@@ -42,14 +42,14 @@ model category {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   category    String        @unique
   mainImg String
-  iconimg String
+  iconImg String
   subcategories Subcategory[]
 }
 model Subcategory {
    id      String   @id @default(auto()) @map("_id") @db.ObjectId
   subcategory String   @unique
   mainImg String
-        iconimg String
+  iconImg String
  category category? @relation(fields:[categoryId] , references: [id])
  categoryId String?
 }

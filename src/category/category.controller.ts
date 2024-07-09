@@ -17,10 +17,10 @@ export class CategoryController {
   @UseInterceptors(
     FileFieldsInterceptor([
         { name: 'mainImg', maxCount: 1 },
-        { name: 'iconimg', maxCount: 1 }
+        { name: 'iconImg', maxCount: 1 }
     ], { storage: Multer.memoryStorage() })
 )
-addsubcategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer.File }, @Body() dto: addSubcategory) {
+addsubcategory(@UploadedFiles() files: { mainImg?: Multer.File, iconImg?: Multer.File }, @Body() dto: addSubcategory) {
     return this.categoryService.addSubcategory(files, dto);
 	
 }
@@ -29,10 +29,10 @@ addsubcategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer
 	@UseInterceptors(
 		FileFieldsInterceptor([
 			{ name: 'mainImg', maxCount: 1 },
-			{ name: 'iconimg', maxCount: 1 }
+			{ name: 'iconImg', maxCount: 1 }
 		], { storage: Multer.memoryStorage() })
 	)
-	createCategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer.File }, @Body() dto: createCategoryDto) {
+	createCategory(@UploadedFiles() files: { mainImg?: Multer.File, iconImg?: Multer.File }, @Body() dto: createCategoryDto) {
 
 	  return this.categoryService.createCategory(files, dto);
 	}
@@ -53,20 +53,20 @@ addsubcategory(@UploadedFiles() files: { mainImg?: Multer.File, iconimg?: Multer
 	@UseInterceptors(
 		FileFieldsInterceptor([
 			{ name: 'mainImg', maxCount: 1 },
-			{ name: 'iconimg', maxCount: 1 }
+			{ name: 'iconImg', maxCount: 1 }
 		], { storage: Multer.memoryStorage() })
 	)
-	changecategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconimg?: Multer.File[] },@Body() dto: changeCategoryDto) {
+	changecategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconImg?: Multer.File[] },@Body() dto: changeCategoryDto) {
 		return this.categoryService.changeCategory(files,dto)
 	}
 	@Post("changesubcategory")
 	@UseInterceptors(
 		FileFieldsInterceptor([
 			{ name: 'mainImg', maxCount: 1 },
-			{ name: 'iconimg', maxCount: 1 }
+			{ name: 'iconImg', maxCount: 1 }
 		], { storage: Multer.memoryStorage() })
 	)
-	changesubcategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconimg?: Multer.File[] }, @Body() dto: changeSubcategoryDto) {
+	changesubcategory(@UploadedFiles() files: { mainImg?: Multer.File[], iconImg?: Multer.File[] }, @Body() dto: changeSubcategoryDto) {
 		
 		return this.categoryService.changeSubcategory(files,dto)
 	}

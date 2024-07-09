@@ -8,7 +8,7 @@ export class createCategoryDto {
 }
 export class addSubcategory   {
 	@IsString()
-	@IsNotEmpty()
+	@IsNotEmpty()т
 	token: string;
 	id: string;
 	subcategory:string;

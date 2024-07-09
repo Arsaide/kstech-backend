@@ -7,13 +7,13 @@ import {deleteFile, uploadFile} from "middleware/saveImg"
 
 
 interface UpdateSubcategoryDto {
-	iconimg?:string
+	iconImg?:string
 	subcategory?: string;
 	mainImg?: string;
 }
 
 interface UpdateCategoryDto {
-	iconimg?:string
+	iconImg?:string
 	category?: string;
 	mainImg?: string;
 }
@@ -27,7 +27,7 @@ export class CategoryService {
 	constructor(private prisma: PrismaService) {}
 	async createCategory(files, dto: createCategoryDto) {
 		const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-		const iconimgFile = files.iconimg ? files.iconimg[0] : null;
+		const iconImgFile = files.iconImg ? files.iconImg[0] : null;
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
@@ -35,7 +35,7 @@ export class CategoryService {
 			)
 		}
 
-		const iconimg=uploadFile(iconimgFile)
+		const iconImg=uploadFile(iconImgFile)
 	const mainImg=uploadFile(mainImgFile)
 
 		
@@ -51,7 +51,7 @@ export class CategoryService {
 			data: {
 				category: dto.category,
 				mainImg: mainImg,
-				iconimg: iconimg,
+				iconImg: iconImg,
 				subcategories:{ create: [] },
 			},
 		})
@@ -87,7 +87,7 @@ export class CategoryService {
 
 	async addSubcategory(files,dto) {
 		const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-		const iconimgFile = files.iconimg ? files.iconimg[0] : null;
+		const iconImgFile = files.iconImg ? files.iconImg[0] : null;
 		const {user} = await verifyToken(dto.token, this.prisma)
 		if (!user) {
 			throw new NotFoundException(
@@ -107,7 +107,7 @@ export class CategoryService {
 
 		
 
-		const iconimg=uploadFile(iconimgFile)
+		const iconImg=uploadFile(iconImgFile)
 	const mainImg=uploadFile(mainImgFile)
 		
 		await this.prisma.category.update({
@@ -119,7 +119,7 @@ export class CategoryService {
 					create: {
 						subcategory: dto.subcategory,
 						mainImg: mainImg,
-						iconimg: iconimg,
+						iconImg: iconImg,
 				},
 
 				},
@@ -143,10 +143,10 @@ export class CategoryService {
 		})
 		if(files){
 			const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-			const iconimgFile = files.iconimg ? files.iconimg[0] : null;
-			deleteFile(category.iconimg)
+			const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+			deleteFile(category.iconImg)
 			deleteFile(category.mainImg)
-			data.iconimg=await uploadFile(iconimgFile)
+			data.iconImg=await uploadFile(iconImgFile)
 			data.mainImg=await uploadFile(mainImgFile)
 		}
 		if (dto.newName) {
@@ -194,10 +194,10 @@ export class CategoryService {
 		)
 	}
 	const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-	const iconimgFile = files.iconimg ? files.iconimg[0] : null;
-	deleteFile(subcategory.iconimg)
+	const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+	deleteFile(subcategory.iconImg)
 	deleteFile(subcategory.mainImg)
-    data.iconimg=await uploadFile(iconimgFile)
+    data.iconImg=await uploadFile(iconImgFile)
 	data.mainImg=await uploadFile(mainImgFile)
 	
 }	
@@ -265,11 +265,11 @@ const subcategory=await this.prisma.subcategory.findMany({
 if (subcategory) {
 	for(let i=0;i<await subcategory.length;i++){
 	deleteFile(subcategory[i-1].mainImg)
-	deleteFile(subcategory[i-1].iconimg)
+	deleteFile(subcategory[i-1].iconImg)
 }
 }
 deleteFile(category.mainImg)
-deleteFile(category.iconimg)
+deleteFile(category.iconImg)
 await this.prisma.subcategory.deleteMany({
 	where:{
 		categoryId:dto.id
@@ -307,7 +307,7 @@ await this.prisma.subcategory.deleteMany({
 				subcategory: "",
 			},
 		})
-		const url =subcategory.iconimg
+		const url =subcategory.iconImg
 		deleteFile(url)
 		const url2 =subcategory.mainImg
 		deleteFile(url2)
