@@ -25,9 +25,9 @@ export class changeSubcategoryDto  {
 	@IsNotEmpty()
 	newName?: string;
 	token:string
-	oldName:string;
+	id:string;
 	
-	img?:string;
+	
 }
 export class deleteCategoryDto{
 	@IsString()

@@ -180,13 +180,19 @@ export class CategoryService {
 			)
 		}
 		let data:UpdateSubcategoryDto={}
-		if(files){
-			
-	const subcategory=await this.prisma.subcategory.findFirst({
+		const subcategory=await this.prisma.subcategory.findFirst({
 		where:{
-			subcategory: dto.oldName,
+			id: dto.id,
 		}
 	})		
+		if(files){
+			
+	
+	if(!subcategory){
+		throw new NotFoundException(
+			"the subcategory was not found."
+		)
+	}
 	const mainImgFile = files.mainImg ? files.mainImg[0] : null;
 	const iconimgFile = files.iconimg ? files.iconimg[0] : null;
 	deleteFile(subcategory.iconimg)
@@ -195,13 +201,15 @@ export class CategoryService {
 	data.mainImg=await uploadFile(mainImgFile)
 	
 }	
+
   if (dto.newName) {
     data.subcategory = dto.newName;
   }
   if(dto.newName){
+	
 			await this.prisma.product.updateMany({
 			where: {
-				subcategory: dto.oldName,
+				subcategory: subcategory.subcategory,
 			},
 			data:{
 				subcategory:dto.newName
@@ -213,7 +221,7 @@ export class CategoryService {
 		}
 		await this.prisma.subcategory.update({
 			where:{
-				subcategory:dto.oldName
+				subcategory:subcategory.subcategory
 			},
 			data:data
 		})
