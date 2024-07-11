@@ -66,9 +66,11 @@ export class ProductsService {
 		const arr = await Promise.all(uploadPromises)
 		const article = generateUniqueArticle()
 		const colorArr = dto.colors.split(",")
-		const paymentMethodArr = dto.paymentMethod
+	let paymentMethodArr = dto.paymentMethod
 		// const deliveryMethodArr = dto.deliveryMethod.split(",")
-
+if(typeof dto.paymentMethod=='string'){
+	paymentMethodArr=[dto.paymentMethod]
+}
 		await this.prisma.product.create({
 			data: {
 				name: dto.name,
@@ -112,8 +114,10 @@ export class ProductsService {
 		let arry = arr.concat(oldImgArr)
 		console.log(arry)
 		const colorArr = dto.colors.split(",")
-		const paymentMethodArr = dto.paymentMethod
-
+		let paymentMethodArr = dto.paymentMethod
+		if(typeof dto.paymentMethod=='string'){
+			paymentMethodArr=[dto.paymentMethod]
+		}
 		console.log(dto.deliveryMethod)
 		console.log(dto.deliveryMethod[2])
 		// console.log( deliveryMethodArr)
