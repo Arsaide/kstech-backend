@@ -71,6 +71,11 @@ export class ProductsService {
 if(typeof dto.paymentMethod=='string'){
 	paymentMethodArr=[dto.paymentMethod]
 }
+let deliveryMethodArr=dto.deliveryMethod
+		
+		if(typeof dto.deliveryMethod=='string'){
+			deliveryMethodArr=[dto.deliveryMethod]
+		}
 		await this.prisma.product.create({
 			data: {
 				name: dto.name,
@@ -85,7 +90,7 @@ if(typeof dto.paymentMethod=='string'){
 				imgArr: arr,
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
-				deliveryMethod: dto.deliveryMethod,
+				deliveryMethod: deliveryMethodArr,
 				article: Number(article),
 				discount: Number(dto.discount),
 				long: dto.long,
@@ -115,9 +120,15 @@ if(typeof dto.paymentMethod=='string'){
 		console.log(arry)
 		const colorArr = dto.colors.split(",")
 		let paymentMethodArr = dto.paymentMethod
+		let deliveryMethodArr=dto.deliveryMethod
+		
+		if(typeof dto.deliveryMethod=='string'){
+			deliveryMethodArr=[dto.deliveryMethod]
+		}
 		if(typeof dto.paymentMethod=='string'){
 			paymentMethodArr=[dto.paymentMethod]
 		}
+		
 		console.log(dto.deliveryMethod)
 		console.log(dto.deliveryMethod[2])
 		// console.log( deliveryMethodArr)
@@ -136,7 +147,7 @@ if(typeof dto.paymentMethod=='string'){
 				imgArr: arry,
 				paymentMethod: paymentMethodArr,
 				turningMethod: dto.turningMethod,
-				deliveryMethod: dto.deliveryMethod,
+				deliveryMethod:deliveryMethodArr ,
 
 				discount: Number(dto.discount),
 				long: dto.long,
