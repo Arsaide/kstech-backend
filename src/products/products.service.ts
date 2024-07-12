@@ -158,36 +158,33 @@ let deliveryMethodArr=dto.deliveryMethod
 		return "all good"
 	}
 	async getOne(id) {
-		const product = await this.prisma.product.findFirst({
+		let products = await this.prisma.product.findFirst({
 			where: {
 				id: id,
 			},
 		})
-		if (!product) {
+		if (!products) {
 			throw new NotFoundException(
 				"The product with the given identifier was not found."
 			)
 		}
-		const categorys=await this.prisma.category.findFirst({
+		const category=await this.prisma.category.findFirst({
 			where:{
-				id:product.category
+				id:products.category
 			}
 		})
-		const subcategorys=await this.prisma.subcategory.findFirst({
+		const subcategory=await this.prisma.subcategory.findFirst({
 			where:{
-				id :product.subcategory 
+				id :products.subcategory 
 			}
 		})
-		const category={
-			category:categorys.category,
-			id:categorys.id
-		}
-		const subcategory={
-			category:subcategorys.subcategory,
-			id:subcategorys.id
-		}
+		const product = {
+			...products,
+			categoryName: category ? category.category : null,
+			subcategoryName: subcategory ? subcategory.subcategory : null
+		};
 		return {
-			product,category,subcategory
+			product
 		}
 	}
 
