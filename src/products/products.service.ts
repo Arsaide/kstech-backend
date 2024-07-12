@@ -217,8 +217,13 @@ let deliveryMethodArr=dto.deliveryMethod
 		const skip = (parseInt(page) - 1) * 20 // Assuming page starts from 1 and each page shows 10 items
 		const take = await this.prisma.product.count()
 		let products
-		if(typeof query=='string'){
-		 products = await this.prisma.product.findMany({
+		if(!isNaN(Number(query))){
+	        products = await this.prisma.product.findFirst({
+				where:{
+					article:Number(query)
+				}
+			})}else{
+				 products = await this.prisma.product.findMany({
 			where: {
 				OR: [
 					{
@@ -236,12 +241,7 @@ let deliveryMethodArr=dto.deliveryMethod
 			},
 			skip,
 			take,
-		})}else{
-			 products = await this.prisma.product.findFirst({
-				where:{
-					article:query
-				}
-			})
+		})
 		}
 		return {products}
 	}
