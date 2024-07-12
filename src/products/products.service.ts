@@ -216,8 +216,9 @@ let deliveryMethodArr=dto.deliveryMethod
 	async search(page: string, query: string) {
 		const skip = (parseInt(page) - 1) * 20 // Assuming page starts from 1 and each page shows 10 items
 		const take = await this.prisma.product.count()
-
-		const products = await this.prisma.product.findMany({
+		let products
+		if(typeof query=='string'){
+		 products = await this.prisma.product.findMany({
 			where: {
 				OR: [
 					{
@@ -230,11 +231,18 @@ let deliveryMethodArr=dto.deliveryMethod
 							contains: query,
 						},
 					},
+					
 				],
 			},
 			skip,
 			take,
-		})
+		})}else{
+			 products = await this.prisma.product.findFirst({
+				where:{
+					article:query
+				}
+			})
+		}
 		return {products}
 	}
 

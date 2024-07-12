@@ -51,7 +51,7 @@ export class ProductsController {
 	}
 	@Get("search")
 	@UsePipes(new ValidationPipe())
-	search(@Query("page") page: string, @Query("query") query: string) {
+	search(@Query("page") page: string, @Query("query") query: string | number) {
 		return this.productsService.search(page, query)
 	}
 	@Get("get")
