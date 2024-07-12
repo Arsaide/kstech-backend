@@ -14,7 +14,7 @@ export class createDto {
   height: string;
   token: string;
 
-  turningMethod: string;
+  
   width:string;
   long:string;
   @IsNumber()
@@ -24,6 +24,7 @@ export class createDto {
   deliveryMethod: string[]; 
    paymentMethod: string[];
    colors: string[];
+   turningMethod: string[];
 }
 export class changeDto extends createDto {
   @IsString()

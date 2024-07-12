@@ -75,7 +75,10 @@ if(typeof dto.paymentMethod=='string'){
 	paymentMethodArr=[dto.paymentMethod]
 }
 let deliveryMethodArr=dto.deliveryMethod
-		
+let turningMethodArr=dto.turningMethod
+if(typeof dto.turningMethod=='string'){
+	turningMethodArr=[dto.turningMethod]
+}
 		if(typeof dto.deliveryMethod=='string'){
 			deliveryMethodArr=[dto.deliveryMethod]
 		}
@@ -92,7 +95,7 @@ let deliveryMethodArr=dto.deliveryMethod
 				height: dto.height,
 				imgArr: arr,
 				paymentMethod: paymentMethodArr,
-				turningMethod: dto.turningMethod,
+				turningMethod:turningMethodArr,
 				deliveryMethod: deliveryMethodArr,
 				article: Number(article),
 				discount: Number(dto.discount),
@@ -125,6 +128,10 @@ let deliveryMethodArr=dto.deliveryMethod
 		if(typeof dto.colors=='string'){
 			colorArr=[dto.colors]
 		}
+		let turningMethodArr=dto.turningMethod
+		if(typeof dto.turningMethod=='string'){
+			turningMethodArr=[dto.turningMethod]
+		}
 		let paymentMethodArr = dto.paymentMethod
 		let deliveryMethodArr=dto.deliveryMethod
 		
@@ -152,7 +159,7 @@ let deliveryMethodArr=dto.deliveryMethod
 				height: dto.height,
 				imgArr: arry,
 				paymentMethod: paymentMethodArr,
-				turningMethod: dto.turningMethod,
+				turningMethod: turningMethodArr,
 				deliveryMethod:deliveryMethodArr ,
 
 				discount: Number(dto.discount),
