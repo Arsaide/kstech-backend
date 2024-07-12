@@ -155,15 +155,16 @@ export class CategoryService {
 			data.category = dto.newName;
 		  }
 		  if(dto.newName){
-					await this.prisma.product.updateMany({
-					where: {
-						category: category.category,
-					},
-					data:{
-						category:dto.newName
+				// 	await this.prisma.product.updateMany({
+				// 	where: {
+				// 		category: category.category,
+				// 	},
+				// 	data:{
+				// 		category:dto.newName
 						
-					}
-				});}
+				// 	}
+				// });
+			}
 		
 		await this.prisma.category.update({
 			where: {
@@ -209,15 +210,15 @@ export class CategoryService {
   }
   if(dto.newName){
 	
-			await this.prisma.product.updateMany({
-			where: {
-				subcategory: subcategory.subcategory,
-			},
-			data:{
-				subcategory:dto.newName
+		// 	await this.prisma.product.updateMany({
+		// 	where: {
+		// 		subcategory: subcategory.id,
+		// 	},
+		// 	data:{
+		// 		subcategory:dto.newName
 				
-			}
-		});
+		// 	}
+		// });
 		
 
 		}
@@ -242,7 +243,7 @@ export class CategoryService {
 		}
 		await this.prisma.product.updateMany({
 			where: {
-				category: dto.category,
+				category: dto.id,
 			},
 			data: {
 				category: "",
@@ -303,7 +304,7 @@ await this.prisma.subcategory.deleteMany({
   }
   await this.prisma.product.updateMany({
 			where: {
-				subcategory: dto.subcategory,
+				subcategory: subcategory.id,
 			},
 			data: {
 				subcategory: "",
