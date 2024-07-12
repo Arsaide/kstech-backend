@@ -5,7 +5,7 @@ export class createDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  colors: string;
+  
   description: string;
   inAvailability: string;
   category: string;
@@ -23,6 +23,7 @@ export class createDto {
   @ApiProperty({ type: [String] })
   deliveryMethod: string[]; 
    paymentMethod: string[];
+   colors: string[];
 }
 export class changeDto extends createDto {
   @IsString()

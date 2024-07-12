@@ -65,7 +65,10 @@ export class ProductsService {
 
 		const arr = await Promise.all(uploadPromises)
 		const article = generateUniqueArticle()
-		const colorArr = dto.colors.split(",")
+		let colorArr = dto.colors
+		if(typeof dto.colors=='string'){
+			colorArr=[dto.colors]
+		}
 	let paymentMethodArr = dto.paymentMethod
 		// const deliveryMethodArr = dto.deliveryMethod.split(",")
 if(typeof dto.paymentMethod=='string'){
@@ -118,7 +121,10 @@ let deliveryMethodArr=dto.deliveryMethod
 
 		let arry = arr.concat(oldImgArr)
 		console.log(arry)
-		const colorArr = dto.colors.split(",")
+		let colorArr = dto.colors
+		if(typeof dto.colors=='string'){
+			colorArr=[dto.colors]
+		}
 		let paymentMethodArr = dto.paymentMethod
 		let deliveryMethodArr=dto.deliveryMethod
 		
