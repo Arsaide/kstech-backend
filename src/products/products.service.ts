@@ -168,9 +168,20 @@ let deliveryMethodArr=dto.deliveryMethod
 				"The product with the given identifier was not found."
 			)
 		}
+		const category=await this.prisma.category.findFirst({
+			where:{
+				id:product.category
+			}
+		})
+		const subcategory=await this.prisma.subcategory.findFirst({
+			where:{
+				id :product.subcategory 
+			}
+		})
+
 
 		return {
-			product,
+			product,category,subcategory 
 		}
 	}
 
