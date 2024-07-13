@@ -242,6 +242,12 @@ if(typeof dto.turningMethod=='string'){
 							mode: 'insensitive', // делаем поиск нечувствительным к регистру
 						  },
 						},
+						{	
+							article: {
+								contains: query.toLowerCase(),
+								mode: 'insensitive',
+							},
+						},
 					  ],
 					},
 				  });
