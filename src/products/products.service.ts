@@ -224,33 +224,37 @@ if(typeof dto.turningMethod=='string'){
 		const skip = (parseInt(page) - 1) * 20 // Assuming page starts from 1 and each page shows 10 items
 		const take = await this.prisma.product.count()
 		let products
+		const totalProducts = await this.prisma.product.count()
 		if(!isNaN(Number(query))){
 	        products = await this.prisma.product.findFirst({
 				where:{
 					article:Number(query)
 				}
 			})}else{
+				console.log(query)
 				 products = await this.prisma.product.findMany({
 			where: {
 				OR: [
 					{
-						name: {
-							contains: query,
-						},
+					  name: {
+						contains: query.toLowerCase(),
+						mode: 'insensitive', // делаем поиск нечувствительным к регистру
+					  },
 					},
 					{
-						description: {
-							contains: query,
-						},
+					  description: {
+						contains: query.toLowerCase(),
+						mode: 'insensitive', // делаем поиск нечувствительным к регистру
+					  },
 					},
-					
-				],
+				  ],
 			},
 			skip,
 			take,
 		})
+		console.log(products)
 		}
-		return {products}
+		return {products,totalProducts}
 	}
 
 	async delete(id, token) {
