@@ -23,7 +23,7 @@ model product {
   weight String
   height String
   imgArr String[]
-  article Int
+  article String
   deliveryMethod String[]
   paymentMethod String[]
   turningMethod String[]

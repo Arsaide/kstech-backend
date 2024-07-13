@@ -4,6 +4,7 @@ import {changeDto, createCategoryDto, createDto} from "./products.dto"
 import * as Multer from "multer"
 import verifyToken from "middleware/verifyToken"
 import generateUniqueArticle from "middleware/generateartcile"
+import { contains } from "class-validator"
 // import {uploadFile} from "../../middleware/create"
 require("dotenv").config()
 const fs = require("fs")
@@ -97,7 +98,7 @@ if(typeof dto.turningMethod=='string'){
 				paymentMethod: paymentMethodArr,
 				turningMethod:turningMethodArr,
 				deliveryMethod: deliveryMethodArr,
-				article: Number(article),
+				article: article,
 				discount: Number(dto.discount),
 				long: dto.long,
 				width: dto.width,
@@ -225,12 +226,7 @@ if(typeof dto.turningMethod=='string'){
 		const take = await this.prisma.product.count()
 		let products
 		let totalPages 
-		if(!isNaN(Number(query))){
-	        products = await this.prisma.product.findFirst({
-				where:{
-					article:Number(query)
-				}
-			})}else{
+		
 				const totalProducts = await this.prisma.product.count({
 					where: {
 					  OR: [
@@ -268,13 +264,19 @@ if(typeof dto.turningMethod=='string'){
 						mode: 'insensitive', // делаем поиск нечувствительным к регистру
 					  },
 					},
+				{	
+					article: {
+						contains: query.toLowerCase(),
+						mode: 'insensitive',
+					},
+				},
 				  ],
 			},
 			skip,
 			take,
 		})
-		console.log(products)
-		}
+	
+		
 		return {products,totalPages}
 	}
 
