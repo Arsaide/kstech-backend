@@ -303,6 +303,15 @@ if(typeof dto.turningMethod=='string'){
 
 
 	async getForCategory(query) {
+		const totalProducts = await this.prisma.product.count({
+			where: {
+				category: query.category,
+			}
+		});
+	
+		// Calculate the total number of pages
+		const pageSize = 20;
+		const totalPages = Math.ceil(totalProducts / pageSize);
 		const products = await this.prisma.product.findMany({
 			where: {
 				category: query.category,
@@ -310,9 +319,18 @@ if(typeof dto.turningMethod=='string'){
 			take: 20,
 			skip: (query.page - 1) * 20,
 		})
-		return products
+		return{ products,totalPages}
 	}
 	async getForSubcategory(query) {
+		const totalProducts = await this.prisma.product.count({
+			where: {
+				subcategory: query.subcategory,
+			}
+		});
+	
+		// Calculate the total number of pages
+		const pageSize = 20;
+		const totalPages = Math.ceil(totalProducts / pageSize);
 		const products = await this.prisma.product.findMany({
 			where: {
 				subcategory: query.subcategory,
@@ -320,6 +338,6 @@ if(typeof dto.turningMethod=='string'){
 			take: 20,
 			skip: (query.page - 1) * 20,
 		})
-		return products
+		return{ products,totalPages}
 	}
 }
