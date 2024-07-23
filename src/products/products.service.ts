@@ -340,4 +340,30 @@ if(typeof dto.turningMethod=='string'){
 		})
 		return{ products,totalPages}
 	}
+	async getForPromotions(query) {
+	
+	
+	const totalProducts = await this.prisma.product.count({
+		where: {
+			discount: {
+			  gt: 0,
+			},
+		  },
+	});
+	const pageSize = 20;
+		const totalPages = Math.ceil(totalProducts / pageSize);
+		const skip = (query.page - 1) * pageSize;
+	  // Получаем продукты с учетом пагинации и фильтрации по наличию скидки
+	  const products = await this.prisma.product.findMany({
+		skip: skip,
+		take: pageSize,
+		where: {
+			discount: {
+			  gt: 0,
+			},
+		  },
+	  });
+  
+	  return {products,totalPages};
+	}
 }
