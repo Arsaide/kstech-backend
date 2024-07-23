@@ -74,4 +74,9 @@ export class ProductsController {
 	getforsubcategory(@Query() query: getForSubcategoryDto) {
 		return this.productsService.getForSubcategory(query)
 	}
+	@Get("getforpromotions")
+	@UsePipes(new ValidationPipe())
+	getforpromotions(@Query() query: getForSubcategoryDto) {
+		return this.productsService.getForPromotions(query)
+	}
 }
