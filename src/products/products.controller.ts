@@ -13,6 +13,7 @@ import {
 import {ProductsService} from "./products.service"
 import {
 	addSubcategory,
+	buyDto,
 	changeDto,
 	createCategoryDto,
 	createDto,
@@ -81,7 +82,7 @@ export class ProductsController {
 	}
 	@Post("buy")
 	@UsePipes(new ValidationPipe())
-	buy( @Body() dto: createDto) {
+	buy( @Body() dto: buyDto) {
 		return this.productsService.buy(dto)
 	}
 }

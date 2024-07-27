@@ -1,11 +1,17 @@
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 export class createDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  
+
   description: string;
   inAvailability: string;
   category: string;
@@ -14,17 +20,16 @@ export class createDto {
   height: string;
   token: string;
 
-  
-  width:string;
-  long:string;
+  width: string;
+  long: string;
   @IsNumber()
   price: number;
-  discount:number;
+  discount: number;
   @ApiProperty({ type: [String] })
-  deliveryMethod: string[]; 
-   paymentMethod: string[];
-   colors: string[];
-   turningMethod: string[];
+  deliveryMethod: string[];
+  paymentMethod: string[];
+  colors: string[];
+  turningMethod: string[];
 }
 export class changeDto extends createDto {
   @IsString()
@@ -37,22 +42,29 @@ export class createCategoryDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  token:string
+  token: string;
 }
-export class addSubcategory   {
+export class addSubcategory {
   @IsString()
   @IsNotEmpty()
   id: string;
-  subcategory:string;
+  subcategory: string;
 }
-export class getForCategoryDto{
-  page:string
-  category:string
+export class getForCategoryDto {
+  page: string;
+  category: string;
 }
-export class getForSubcategoryDto{
-  page:string
-  subcategory:string
+export class getForSubcategoryDto {
+  page: string;
+  subcategory: string;
 }
-export class buyDto{
-  
+export class buyDto {
+  @IsString()
+  id: string;
+  deliveryMethod: string;
+  paymentMethod: string;
+  turningMethod: string;
+  colors: string;
+  name: string;
+  number: string;
 }
