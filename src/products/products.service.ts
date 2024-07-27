@@ -384,6 +384,6 @@ export class ProductsService {
       number: dto.number,
     };
     await emailSend.sendmessage({ products: obj });
-    return "aa";
+    return "al good";
   }
 }
