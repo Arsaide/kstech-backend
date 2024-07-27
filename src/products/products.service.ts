@@ -366,4 +366,5 @@ if(typeof dto.turningMethod=='string'){
   
 	  return {products,totalPages};
 	}
+	async buy(dto){}
 }

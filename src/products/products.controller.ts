@@ -79,4 +79,9 @@ export class ProductsController {
 	getforpromotions(@Query() query: getForSubcategoryDto) {
 		return this.productsService.getForPromotions(query)
 	}
+	@Post("buy")
+	@UsePipes(new ValidationPipe())
+	buy( @Body() dto: createDto) {
+		return this.productsService.buy(dto)
+	}
 }

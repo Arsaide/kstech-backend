@@ -53,3 +53,6 @@ export class getForSubcategoryDto{
   page:string
   subcategory:string
 }
+export class buyDto{
+  
+}
