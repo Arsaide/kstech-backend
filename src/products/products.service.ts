@@ -315,7 +315,7 @@ export class ProductsService {
           id:query.category
         }
       })
-     const nameCategory= category.category
+     const Category= {category:category.category,id:category.id}
       // Calculate the total number of pages
       const pageSize = 20;
       const totalPages = Math.ceil(totalProducts / pageSize);
@@ -326,7 +326,7 @@ export class ProductsService {
         take: 20,
         skip: (query.page - 1) * 20,
       });
-      return { products, totalPages ,nameCategory};
+      return { products, totalPages ,Category};
     } catch (e) {
       throw new NotFoundException(e);
     }
@@ -342,13 +342,13 @@ export class ProductsService {
         id: query.subcategory,
       },
     });
-    const nameSubcategory = subcategory.subcategory;
+    const Subcategory = {subcategory:subcategory.subcategory,id:subcategory.id}
     const category = await this.prisma.category.findFirst({
       where: {
         id: subcategory.categoryId,
       },
     });
-    const nameCategory = category.category;
+    const Category = {category:category.category,id:category.id}
     // Calculate the total number of pages
     const pageSize = 20;
     const totalPages = Math.ceil(totalProducts / pageSize);
@@ -359,7 +359,7 @@ export class ProductsService {
       take: 20,
       skip: (query.page - 1) * 20,
     });
-    return { products, totalPages, nameCategory, nameSubcategory };
+    return { products, totalPages, Category, Subcategory };
   }
   async getForPromotions(query) {
     const totalProducts = await this.prisma.product.count({
