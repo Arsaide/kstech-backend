@@ -304,23 +304,32 @@ export class ProductsService {
   }
 
   async getForCategory(query) {
-    const totalProducts = await this.prisma.product.count({
-      where: {
-        category: query.category,
-      },
-    });
-
-    // Calculate the total number of pages
-    const pageSize = 20;
-    const totalPages = Math.ceil(totalProducts / pageSize);
-    const products = await this.prisma.product.findMany({
-      where: {
-        category: query.category,
-      },
-      take: 20,
-      skip: (query.page - 1) * 20,
-    });
-    return { products, totalPages };
+    try {
+      const totalProducts = await this.prisma.product.count({
+        where: {
+          category: query.category,
+        },
+      });
+      const category=await this.prisma.category.findFirst({
+        where:{
+          id:query.category
+        }
+      })
+     const nameCategory= category.category
+      // Calculate the total number of pages
+      const pageSize = 20;
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const products = await this.prisma.product.findMany({
+        where: {
+          category: query.category,
+        },
+        take: 20,
+        skip: (query.page - 1) * 20,
+      });
+      return { products, totalPages ,nameCategory};
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   async getForSubcategory(query) {
     const totalProducts = await this.prisma.product.count({
@@ -328,7 +337,18 @@ export class ProductsService {
         subcategory: query.subcategory,
       },
     });
-
+    const subcategory = await this.prisma.subcategory.findFirst({
+      where: {
+        id: query.subcategory,
+      },
+    });
+    const nameSubcategory = subcategory.subcategory;
+    const category = await this.prisma.category.findFirst({
+      where: {
+        id: subcategory.categoryId,
+      },
+    });
+    const nameCategory = category.category;
     // Calculate the total number of pages
     const pageSize = 20;
     const totalPages = Math.ceil(totalProducts / pageSize);
@@ -339,7 +359,7 @@ export class ProductsService {
       take: 20,
       skip: (query.page - 1) * 20,
     });
-    return { products, totalPages };
+    return { products, totalPages, nameCategory, nameSubcategory };
   }
   async getForPromotions(query) {
     const totalProducts = await this.prisma.product.count({
@@ -373,9 +393,7 @@ export class ProductsService {
     });
     const obj = {
       name: products.name,
-      
-   
-     
+
       deliveryMethod: dto.deliveryMethod,
       paymentMethod: dto.paymentMethod,
       turningMethod: dto.turningMethod,
