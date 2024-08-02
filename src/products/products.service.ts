@@ -225,8 +225,8 @@ export class ProductsService {
     };
   }
   async search(page: string, query: string) {
-    const skip = (parseInt(page) - 1) * 20; // Assuming page starts from 1 and each page shows 10 items
-    const take = await this.prisma.product.count();
+    try{
+  
     let products;
     let totalPages;
 
@@ -255,8 +255,8 @@ export class ProductsService {
       },
     });
 
-    // Затем рассчитываем количество страниц
-    totalPages = Math.ceil(totalProducts / take);
+    
+    totalPages = Math.ceil(totalProducts / 20);
     console.log(query);
     products = await this.prisma.product.findMany({
       where: {
@@ -281,11 +281,14 @@ export class ProductsService {
           },
         ],
       },
-      skip,
-      take,
+      skip:(parseInt(page)-1)* 20,
+      take: 20,
     });
 
     return { products, totalPages };
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async delete(id, token) {
