@@ -19,7 +19,7 @@ export class createDto {
   weight: string;
   height: string;
   token: string;
-
+  country: string;
   width: string;
   long: string;
   @IsNumber()

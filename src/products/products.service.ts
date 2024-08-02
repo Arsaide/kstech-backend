@@ -96,6 +96,7 @@ export class ProductsService {
         weight: dto.weight,
         height: dto.height,
         imgArr: arr,
+        country:dto.country,
         paymentMethod: paymentMethodArr,
         turningMethod: turningMethodArr,
         deliveryMethod: deliveryMethodArr,
@@ -110,6 +111,7 @@ export class ProductsService {
   }
 
   async change(file: Multer.File[], dto: changeDto) {
+    try{
     const { user } = await verifyToken(dto.token, this.prisma);
     if (!user) {
       throw new NotFoundException(
@@ -163,7 +165,7 @@ export class ProductsService {
         paymentMethod: paymentMethodArr,
         turningMethod: turningMethodArr,
         deliveryMethod: deliveryMethodArr,
-
+        country:dto.country,
         discount: Number(dto.discount),
         long: dto.long,
         width: dto.width,
@@ -171,8 +173,13 @@ export class ProductsService {
     });
 
     return "all good";
+  } catch (e) {
+    throw new NotFoundException(e);
   }
+  }
+  
   async getOne(id) {
+    try{
     let products = await this.prisma.product.findFirst({
       where: {
         id: id,
@@ -208,6 +215,9 @@ export class ProductsService {
     return {
       product,
     };
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async get(page: number) {
@@ -224,6 +234,7 @@ export class ProductsService {
       totalPages,
     };
   }
+
   async search(page: string, query: string) {
     try{
   

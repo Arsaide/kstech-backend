@@ -27,6 +27,7 @@ model product {
   deliveryMethod String[]
   paymentMethod String[]
   turningMethod String[]
+  country String?
   discount Int
   long String
 	width String
