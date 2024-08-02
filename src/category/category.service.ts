@@ -56,25 +56,16 @@ export class CategoryService {
     return "all good";
   }
 
-  //   async getCategories() {
-  //     try {
-  //       const category = await this.prisma.category.findMany();
-  //       return category;
-  //     } catch (e) {
-  //       throw new NotFoundException(e);
-  //     }
-  //   }
-  async getCategories() {
-	const products = await this.prisma.product.findMany();
+    async getCategories() {
+      try {
+        const category = await this.prisma.category.findMany();
+        return category;
+      } catch (e) {
+        throw new NotFoundException(e);
+      }
+    }
 
-
-	for (const product of products) {
-	  await this.prisma.product.update({
-		where: { id: product.id },
-		data: { country: "ukraine" },
-	  });
-	}
-  }
+	
   async getOneCategory(id) {
     const category = await this.prisma.category.findFirst({
       where: {
