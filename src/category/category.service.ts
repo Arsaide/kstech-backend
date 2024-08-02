@@ -56,254 +56,277 @@ export class CategoryService {
     return "all good";
   }
 
-    async getCategories() {
-      try {
-        const category = await this.prisma.category.findMany();
-        return category;
-      } catch (e) {
-        throw new NotFoundException(e);
-      }
+  async getCategories() {
+    try {
+      const category = await this.prisma.category.findMany();
+      return category;
+    } catch (e) {
+      throw new NotFoundException(e);
     }
+  }
 
-	
   async getOneCategory(id) {
-    const category = await this.prisma.category.findFirst({
-      where: {
-        id: id,
-      },
-    });
-    const subcategory = await this.prisma.subcategory.findMany({
-      where: {
-        categoryId: id,
-      },
-    });
+    try {
+      const category = await this.prisma.category.findFirst({
+        where: {
+          id: id,
+        },
+      });
+      const subcategory = await this.prisma.subcategory.findMany({
+        where: {
+          categoryId: id,
+        },
+      });
 
-    return { category, subcategory };
+      return { category, subcategory };
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async addSubcategory(files, dto) {
-    const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-    const iconImgFile = files.iconImg ? files.iconImg[0] : null;
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    const subcategory = await this.prisma.subcategory.findFirst({
-      where: {
-        subcategory: dto.subcategory,
-      },
-    });
-    if (subcategory) {
-      throw new NotFoundException("This name is taken.");
-    }
+    try {
+      const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+      const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      const subcategory = await this.prisma.subcategory.findFirst({
+        where: {
+          subcategory: dto.subcategory,
+        },
+      });
+      if (subcategory) {
+        throw new NotFoundException("This name is taken.");
+      }
 
-    const iconImg = uploadFile(iconImgFile);
-    const mainImg = uploadFile(mainImgFile);
+      const iconImg = uploadFile(iconImgFile);
+      const mainImg = uploadFile(mainImgFile);
 
-    await this.prisma.category.update({
-      where: {
-        id: dto.id,
-      },
-      data: {
-        subcategories: {
-          create: {
-            subcategory: dto.subcategory,
-            mainImg: mainImg,
-            iconImg: iconImg,
+      await this.prisma.category.update({
+        where: {
+          id: dto.id,
+        },
+        data: {
+          subcategories: {
+            create: {
+              subcategory: dto.subcategory,
+              mainImg: mainImg,
+              iconImg: iconImg,
+            },
           },
         },
-      },
-    });
-    return "all good";
+      });
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async changeCategory(files, dto) {
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    let data: UpdateCategoryDto = {};
-    const category = await this.prisma.category.findFirst({
-      where: {
-        id: dto.id,
-      },
-    });
+    try {
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      let data: UpdateCategoryDto = {};
+      const category = await this.prisma.category.findFirst({
+        where: {
+          id: dto.id,
+        },
+      });
 
-    if (
-      files.mainImg &&
-      Array.isArray(files.mainImg) &&
-      files.mainImg.length > 0
-    ) {
-      console.log(files);
-      const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-      const iconImgFile = files.iconImg ? files.iconImg[0] : null;
-      deleteFile(category.iconImg);
-      deleteFile(category.mainImg);
-      data.iconImg = await uploadFile(iconImgFile);
-      data.mainImg = await uploadFile(mainImgFile);
-    }
-    if (dto.newName) {
-      data.category = dto.newName;
-    }
-    if (dto.newName) {
-      // 	await this.prisma.product.updateMany({
-      // 	where: {
-      // 		category: category.category,
-      // 	},
-      // 	data:{
-      // 		category:dto.newName
-      // 	}
-      // });
-    }
+      if (
+        files.mainImg &&
+        Array.isArray(files.mainImg) &&
+        files.mainImg.length > 0
+      ) {
+        console.log(files);
+        const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+        const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+        deleteFile(category.iconImg);
+        deleteFile(category.mainImg);
+        data.iconImg = await uploadFile(iconImgFile);
+        data.mainImg = await uploadFile(mainImgFile);
+      }
+      if (dto.newName) {
+        data.category = dto.newName;
+      }
+      if (dto.newName) {
+        // 	await this.prisma.product.updateMany({
+        // 	where: {
+        // 		category: category.category,
+        // 	},
+        // 	data:{
+        // 		category:dto.newName
+        // 	}
+        // });
+      }
 
-    await this.prisma.category.update({
-      where: {
-        id: dto.id,
-      },
-      data: data,
-    });
-    return "all good";
+      await this.prisma.category.update({
+        where: {
+          id: dto.id,
+        },
+        data: data,
+      });
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async changeSubcategory(files, dto) {
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    let data: UpdateSubcategoryDto = {};
-    const subcategory = await this.prisma.subcategory.findFirst({
-      where: {
-        id: dto.id,
-      },
-    });
-    if (
-      files.mainImg &&
-      Array.isArray(files.mainImg) &&
-      files.mainImg.length > 0
-    ) {
-      if (!subcategory) {
-        throw new NotFoundException("the subcategory was not found.");
+    try {
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
       }
-      const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-      const iconImgFile = files.iconImg ? files.iconImg[0] : null;
-      deleteFile(subcategory.iconImg);
-      deleteFile(subcategory.mainImg);
-      data.iconImg = await uploadFile(iconImgFile);
-      data.mainImg = await uploadFile(mainImgFile);
-    }
+      let data: UpdateSubcategoryDto = {};
+      const subcategory = await this.prisma.subcategory.findFirst({
+        where: {
+          id: dto.id,
+        },
+      });
+      if (
+        files.mainImg &&
+        Array.isArray(files.mainImg) &&
+        files.mainImg.length > 0
+      ) {
+        if (!subcategory) {
+          throw new NotFoundException("the subcategory was not found.");
+        }
+        const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+        const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+        deleteFile(subcategory.iconImg);
+        deleteFile(subcategory.mainImg);
+        data.iconImg = await uploadFile(iconImgFile);
+        data.mainImg = await uploadFile(mainImgFile);
+      }
 
-    if (dto.newName) {
-      data.subcategory = dto.newName;
-    }
-    if (dto.newName) {
-      // 	await this.prisma.product.updateMany({
-      // 	where: {
-      // 		subcategory: subcategory.id,
-      // 	},
-      // 	data:{
-      // 		subcategory:dto.newName
-      // 	}
-      // });
-    }
-    await this.prisma.subcategory.update({
-      where: {
-        subcategory: subcategory.subcategory,
-      },
-      data: data,
-    });
+      if (dto.newName) {
+        data.subcategory = dto.newName;
+      }
+      if (dto.newName) {
+        // 	await this.prisma.product.updateMany({
+        // 	where: {
+        // 		subcategory: subcategory.id,
+        // 	},
+        // 	data:{
+        // 		subcategory:dto.newName
+        // 	}
+        // });
+      }
+      await this.prisma.subcategory.update({
+        where: {
+          subcategory: subcategory.subcategory,
+        },
+        data: data,
+      });
 
-    return "all good";
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async deleteCategory(dto) {
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    await this.prisma.product.updateMany({
-      where: {
-        category: dto.id,
-      },
-      data: {
-        category: "",
-        subcategory: "",
-      },
-    });
-    const category = await this.prisma.category.findFirst({
-      where: {
-        id: dto.id,
-      },
-    });
-    if (!category) {
-      throw new NotFoundException("category didnt found.");
-    }
-    const subcategory = await this.prisma.subcategory.findMany({
-      where: {
-        categoryId: dto.id,
-      },
-    });
-    if (subcategory) {
-      for (let i = 0; i < (await subcategory.length); i++) {
-        deleteFile(subcategory[i - 1].mainImg);
-        deleteFile(subcategory[i - 1].iconImg);
+    try {
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
       }
+      await this.prisma.product.updateMany({
+        where: {
+          category: dto.id,
+        },
+        data: {
+          category: "",
+          subcategory: "",
+        },
+      });
+      const category = await this.prisma.category.findFirst({
+        where: {
+          id: dto.id,
+        },
+      });
+      if (!category) {
+        throw new NotFoundException("category didnt found.");
+      }
+      const subcategory = await this.prisma.subcategory.findMany({
+        where: {
+          categoryId: dto.id,
+        },
+      });
+      if (subcategory) {
+        for (let i = 0; i < (await subcategory.length); i++) {
+          deleteFile(subcategory[i - 1].mainImg);
+          deleteFile(subcategory[i - 1].iconImg);
+        }
+      }
+      deleteFile(category.mainImg);
+      deleteFile(category.iconImg);
+      await this.prisma.subcategory.deleteMany({
+        where: {
+          categoryId: dto.id,
+        },
+      });
+      await this.prisma.category.delete({
+        where: { id: dto.id },
+      });
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
     }
-    deleteFile(category.mainImg);
-    deleteFile(category.iconImg);
-    await this.prisma.subcategory.deleteMany({
-      where: {
-        categoryId: dto.id,
-      },
-    });
-    await this.prisma.category.delete({
-      where: { id: dto.id },
-    });
-    return "all good";
   }
 
   async deleteSubcategory(dto) {
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    const subcategory = await this.prisma.subcategory.findFirst({
-      where: {
-        subcategory: dto.subcategory,
-      },
-    });
-    if (!subcategory) {
-      throw new NotFoundException(
-        "The subcategory with the given identifier was not found."
-      );
-    }
-    await this.prisma.product.updateMany({
-      where: {
-        subcategory: subcategory.id,
-      },
-      data: {
-        subcategory: "",
-      },
-    });
-    const url = subcategory.iconImg;
-    deleteFile(url);
-    const url2 = subcategory.mainImg;
-    deleteFile(url2);
-    await this.prisma.subcategory.delete({
-      where: {
-        subcategory: dto.subcategory,
-      },
-    });
+    try {
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      const subcategory = await this.prisma.subcategory.findFirst({
+        where: {
+          subcategory: dto.subcategory,
+        },
+      });
+      if (!subcategory) {
+        throw new NotFoundException(
+          "The subcategory with the given identifier was not found."
+        );
+      }
+      await this.prisma.product.updateMany({
+        where: {
+          subcategory: subcategory.id,
+        },
+        data: {
+          subcategory: "",
+        },
+      });
+      const url = subcategory.iconImg;
+      deleteFile(url);
+      const url2 = subcategory.mainImg;
+      deleteFile(url2);
+      await this.prisma.subcategory.delete({
+        where: {
+          subcategory: dto.subcategory,
+        },
+      });
 
-    return "all good";
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 }
