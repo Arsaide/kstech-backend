@@ -63,14 +63,7 @@ class ProductDto {
   @IsString()
   id: string;
 
-  @IsString()
-  deliveryMethod: string;
 
-  @IsString()
-  paymentMethod: string;
-
-  @IsString()
-  turningMethod: string;
 
   
 }
