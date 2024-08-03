@@ -38,7 +38,7 @@ class Emailsend {
       Delivery Method: ${product.deliveryMethod}
       Payment Method: ${product.paymentMethod}
       Turning Method: ${product.turningMethod}
-      Colors: ${product.colors}
+ 
     `).join('\n')}
         `,
     });

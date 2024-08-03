@@ -72,8 +72,7 @@ class ProductDto {
   @IsString()
   turningMethod: string;
 
-  @IsString()
-  colors: string;
+  
 }
 
 class ClientDto {
