@@ -400,22 +400,23 @@ export class ProductsService {
     return { products, totalPages };
   }
   async buy(dto) {
+    try{
     const products = await this.prisma.product.findFirst({
       where: {
         id: dto.id,
       },
     });
+    console.log( dto.products,
+     dto.client)
     const obj = {
-      name: products.name,
-
-      deliveryMethod: dto.deliveryMethod,
-      paymentMethod: dto.paymentMethod,
-      turningMethod: dto.turningMethod,
-      colors: dto.colors,
-      nameUser: dto.name,
-      number: dto.number,
+      products:dto.products,
+   client:dto.client
     };
     await emailSend.sendmessage({ products: obj });
     return "al good";
+  } catch (e) {
+  throw new NotFoundException(e);
+}
   }
+
 }

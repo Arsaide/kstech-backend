@@ -1,42 +1,48 @@
-require('dotenv').config()
-const nodemailer=require('nodemailer')
- 
+require("dotenv").config();
+const nodemailer = require("nodemailer");
+
 class Emailsend {
-    transporter:any
-    constructor() {
-        this.transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD,
-            }
-        });
-    } 
+  transporter: any;
+  constructor() {
+    this.transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+  }
+
+  async sendmessage({ products }) {
+   
+    await this.transporter.sendMail({
+      from: process.env.EMAIL,
+      to: "artemk2504@gmail.com",
+      text: `
+         Order Number: ${products.client.order}
+    Name: ${products.client.clientName}
+    Surname: ${products.client.surname}
+    Number: ${products.client.number}
+    Email: ${products.client.email}
+    Feedback: ${products.client.feedback ? 'Yes' : 'No'}
+    Country: ${products.client.country}
+    Town: ${products.client.town}
+    Street: ${products.client.street}
+    Office: ${products.client.office}
+    Comment: ${products.client.comment}
     
-async sendmessage({ products}){
-    console.log(`${products.number}
-        ${products.name}
-
-        <а href=https://kstech-admin.vercel.app/products-list/${products.link}>${products.name}</a>
-        ${products.deliveryMethod}
-        ${products.paymentMethod}
-        ${products.turningMethod}
-        ${products.colors}`)
-      await this.transporter.sendMail({
-        from:process.env.EMAIL,
-        to:process.env.EMAIL,
-        text:`
-        ${products.number}
-        ${products.name}
-
-        <а href=https://kstech-admin.vercel.app/products-list/${products.link}>${products.name}</a>
-        ${products.deliveryMethod}
-        ${products.paymentMethod}
-        ${products.turningMethod}
-        ${products.colors}
-        `
-    })
-    }
+    Products:
+    ${products.products.map(product => `
+      Product ID: ${product.id}
+      <a href="https://kstech-frontend.vercel.app/catalog/subcatalog/product?id=${product.id}">${product.id}</a>
+      Delivery Method: ${product.deliveryMethod}
+      Payment Method: ${product.paymentMethod}
+      Turning Method: ${product.turningMethod}
+      Colors: ${product.colors}
+    `).join('\n')}
+        `,
+    });
+  }
 }
 
-module.exports=Emailsend
+module.exports = Emailsend;

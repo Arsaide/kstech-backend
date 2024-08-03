@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
 import {
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -58,13 +59,65 @@ export class getForSubcategoryDto {
   page: string;
   subcategory: string;
 }
-export class buyDto {
+class ProductDto {
   @IsString()
   id: string;
+
+  @IsString()
   deliveryMethod: string;
+
+  @IsString()
   paymentMethod: string;
+
+  @IsString()
   turningMethod: string;
+
+  @IsString()
   colors: string;
-  name: string;
+}
+
+class ClientDto {
+  @IsNumber()
+  order: number;
+
+  @IsString()
+  clientName: string;
+
+  @IsString()
+  surname: string;
+
+  @IsString()
   number: string;
+
+  @IsString()
+  email: string;
+
+  @IsBoolean()
+  feedback: boolean;
+
+  @IsString()
+  country: string;
+
+  @IsString()
+  town: string;
+
+  @IsString()
+  street: string;
+
+  @IsString()
+  office: string;
+
+  @IsString()
+  comment: string;
+}
+
+export class BuyDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
+  products: ProductDto[];
+
+  @ValidateNested()
+  @Type(() => ClientDto)
+  client: ClientDto;
 }
