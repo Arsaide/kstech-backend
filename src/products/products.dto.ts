@@ -63,9 +63,7 @@ class ProductDto {
   @IsString()
   id: string;
 
-
-
-  
+  deliveryMethod: string;
 }
 
 class ClientDto {

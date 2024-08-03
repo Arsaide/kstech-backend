@@ -35,7 +35,7 @@ class Emailsend {
     ${products.products.map(product => `
       Product ID: ${product.id}
       <a href="https://kstech-frontend.vercel.app/catalog/subcatalog/product?id=${product.id}">${product.id}</a>
-   
+     ${products.deliveryMethod}
  
     `).join('\n')}
         `,
