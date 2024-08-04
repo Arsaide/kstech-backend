@@ -127,11 +127,13 @@ export class ProductsService {
           arr.push(
             `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
           );
+          console.log(arr)
           return;
+
         });
         await Promise.all(uploadPromises);
       }
-
+console.log(arr)
       if (oldImgArr) {
         arry = arr.concat(oldImgArr);
       }
