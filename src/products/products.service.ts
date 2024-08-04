@@ -130,7 +130,7 @@ export class ProductsService {
           console.log(arr)
           return;
 
-        });
+        });3 
         await Promise.all(uploadPromises);
       }
 console.log(arr)
