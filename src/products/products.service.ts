@@ -112,30 +112,28 @@ export class ProductsService {
 
   async change(file: Multer.File[], dto: changeDto) {
     try {
-      let arry;
       const { user } = await verifyToken(dto.token, this.prisma);
       if (!user) {
         throw new NotFoundException(
           "The user with the given identifier was not found."
         );
       }
-      let arr = [];
+      let arry = [];
       let oldImgArr = dto.oldImg;
+
       if (file) {
         const uploadPromises = file.map(async (files) => {
           await uploadFile(files);
-          arr.push(
+          arry.push(
             `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
           );
-          console.log(arr)
-          return;
-
         });
+
         await Promise.all(uploadPromises);
       }
-console.log(arr)
+
       if (oldImgArr) {
-        arry = arr.concat(oldImgArr);
+        arry = [...arry, ...oldImgArr];
       }
 
       let colorArr = dto.colors;
