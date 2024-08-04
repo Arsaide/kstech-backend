@@ -96,7 +96,7 @@ export class ProductsService {
         weight: dto.weight,
         height: dto.height,
         imgArr: arr,
-        country:dto.country,
+        country: dto.country,
         paymentMethod: paymentMethodArr,
         turningMethod: turningMethodArr,
         deliveryMethod: deliveryMethodArr,
@@ -111,113 +111,121 @@ export class ProductsService {
   }
 
   async change(file: Multer.File[], dto: changeDto) {
-    try{
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
-    let oldImgArr = dto.oldImg;
-    const uploadPromises = file.map(async (files) => {
-      await uploadFile(files);
-      return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
-    });
-    console.log(oldImgArr);
-    const arr = await Promise.all(uploadPromises);
+    try {
+      let arry;
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      let arr = [];
+      let oldImgArr = dto.oldImg;
+      if (file) {
+        const uploadPromises = file.map(async (files) => {
+          await uploadFile(files);
+          arr.push(
+            `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
+          );
+          return;
+        });
+        await Promise.all(uploadPromises);
+      }
 
-    let arry = arr.concat(oldImgArr);
-    console.log(arry);
-    let colorArr = dto.colors;
-    if (typeof dto.colors == "string") {
-      colorArr = [dto.colors];
-    }
-    let turningMethodArr = dto.turningMethod;
-    if (typeof dto.turningMethod == "string") {
-      turningMethodArr = [dto.turningMethod];
-    }
-    let paymentMethodArr = dto.paymentMethod;
-    let deliveryMethodArr = dto.deliveryMethod;
+      if (oldImgArr) {
+        arry = arr.concat(oldImgArr);
+      }
 
-    if (typeof dto.deliveryMethod == "string") {
-      deliveryMethodArr = [dto.deliveryMethod];
-    }
-    if (typeof dto.paymentMethod == "string") {
-      paymentMethodArr = [dto.paymentMethod];
-    }
+      let colorArr = dto.colors;
+      if (typeof dto.colors == "string") {
+        colorArr = [dto.colors];
+      }
+      let turningMethodArr = dto.turningMethod;
+      if (typeof dto.turningMethod == "string") {
+        turningMethodArr = [dto.turningMethod];
+      }
+      let paymentMethodArr = dto.paymentMethod;
+      let deliveryMethodArr = dto.deliveryMethod;
 
-    console.log(dto.deliveryMethod);
-    console.log(dto.deliveryMethod[2]);
-    // console.log( deliveryMethodArr)
-    await this.prisma.product.update({
-      where: { id: dto.id },
-      data: {
-        name: dto.name,
-        colors: colorArr,
-        description: dto.description,
-        price: Number(dto.price),
-        inAvailability: dto.inAvailability,
-        category: dto.category,
-        subcategory: dto.subcategory,
-        weight: dto.weight,
-        height: dto.height,
-        imgArr: arry,
-        paymentMethod: paymentMethodArr,
-        turningMethod: turningMethodArr,
-        deliveryMethod: deliveryMethodArr,
-        country:dto.country,
-        discount: Number(dto.discount),
-        long: dto.long,
-        width: dto.width,
-      },
-    });
+      if (typeof dto.deliveryMethod == "string") {
+        deliveryMethodArr = [dto.deliveryMethod];
+      }
+      if (typeof dto.paymentMethod == "string") {
+        paymentMethodArr = [dto.paymentMethod];
+      }
 
-    return "all good";
-  } catch (e) {
-    throw new NotFoundException(e);
+      console.log(dto.deliveryMethod);
+      console.log(dto.deliveryMethod[2]);
+      // console.log( deliveryMethodArr)
+      await this.prisma.product.update({
+        where: { id: dto.id },
+        data: {
+          name: dto.name,
+          colors: colorArr,
+          description: dto.description,
+          price: Number(dto.price),
+          inAvailability: dto.inAvailability,
+          category: dto.category,
+          subcategory: dto.subcategory,
+          weight: dto.weight,
+          height: dto.height,
+          imgArr: arry,
+          paymentMethod: paymentMethodArr,
+          turningMethod: turningMethodArr,
+          deliveryMethod: deliveryMethodArr,
+          country: dto.country,
+          discount: Number(dto.discount),
+          long: dto.long,
+          width: dto.width,
+        },
+      });
+
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
-  }
-  
+
   async getOne(id) {
-    try{
-    let products = await this.prisma.product.findFirst({
-      where: {
-        id: id,
-      },
-    });
-    if (!products) {
-      throw new NotFoundException(
-        "The product with the given identifier was not found."
-      );
-    }
-    let subcategory;
-    let category;
-    if (products.category) {
-      category = await this.prisma.category.findFirst({
+    try {
+      let products = await this.prisma.product.findFirst({
         where: {
-          id: products.category,
+          id: id,
         },
       });
-    }
+      if (!products) {
+        throw new NotFoundException(
+          "The product with the given identifier was not found."
+        );
+      }
+      let subcategory;
+      let category;
+      if (products.category) {
+        category = await this.prisma.category.findFirst({
+          where: {
+            id: products.category,
+          },
+        });
+      }
 
-    if (products.subcategory) {
-      subcategory = await this.prisma.subcategory.findFirst({
-        where: {
-          id: products.subcategory,
-        },
-      });
+      if (products.subcategory) {
+        subcategory = await this.prisma.subcategory.findFirst({
+          where: {
+            id: products.subcategory,
+          },
+        });
+      }
+      const product = {
+        ...products,
+        categoryName: category ? category.category : null,
+        subcategoryName: subcategory ? subcategory.subcategory : null,
+      };
+      return {
+        product,
+      };
+    } catch (e) {
+      throw new NotFoundException(e);
     }
-    const product = {
-      ...products,
-      categoryName: category ? category.category : null,
-      subcategoryName: subcategory ? subcategory.subcategory : null,
-    };
-    return {
-      product,
-    };
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
   }
 
   async get(page: number) {
@@ -236,70 +244,68 @@ export class ProductsService {
   }
 
   async search(page: string, query: string) {
-    try{
-  
-    let products;
-    let totalPages;
+    try {
+      let products;
+      let totalPages;
 
-    const totalProducts = await this.prisma.product.count({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query.toLowerCase(),
-              mode: "insensitive", // делаем поиск нечувствительным к регистру
+      const totalProducts = await this.prisma.product.count({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: query.toLowerCase(),
+                mode: "insensitive", // делаем поиск нечувствительным к регистру
+              },
             },
-          },
-          {
-            description: {
-              contains: query.toLowerCase(),
-              mode: "insensitive", // делаем поиск нечувствительным к регистру
+            {
+              description: {
+                contains: query.toLowerCase(),
+                mode: "insensitive", // делаем поиск нечувствительным к регистру
+              },
             },
-          },
-          {
-            article: {
-              contains: query.toLowerCase(),
-              mode: "insensitive",
+            {
+              article: {
+                contains: query.toLowerCase(),
+                mode: "insensitive",
+              },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      });
 
-    
-    totalPages = Math.ceil(totalProducts / 20);
-    console.log(query);
-    products = await this.prisma.product.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query.toLowerCase(),
-              mode: "insensitive", // делаем поиск нечувствительным к регистру
+      totalPages = Math.ceil(totalProducts / 20);
+      console.log(query);
+      products = await this.prisma.product.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: query.toLowerCase(),
+                mode: "insensitive", // делаем поиск нечувствительным к регистру
+              },
             },
-          },
-          {
-            description: {
-              contains: query.toLowerCase(),
-              mode: "insensitive", // делаем поиск нечувствительным к регистру
+            {
+              description: {
+                contains: query.toLowerCase(),
+                mode: "insensitive", // делаем поиск нечувствительным к регистру
+              },
             },
-          },
-          {
-            article: {
-              contains: query.toLowerCase(),
-              mode: "insensitive",
+            {
+              article: {
+                contains: query.toLowerCase(),
+                mode: "insensitive",
+              },
             },
-          },
-        ],
-      },
-      skip:(parseInt(page)-1)* 20,
-      take: 20,
-    });
+          ],
+        },
+        skip: (parseInt(page) - 1) * 20,
+        take: 20,
+      });
 
-    return { products, totalPages };
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
+      return { products, totalPages };
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async delete(id, token) {
@@ -324,12 +330,12 @@ export class ProductsService {
           category: query.category,
         },
       });
-      const category=await this.prisma.category.findFirst({
-        where:{
-          id:query.category
-        }
-      })
-     const Category= {category:category.category,id:category.id}
+      const category = await this.prisma.category.findFirst({
+        where: {
+          id: query.category,
+        },
+      });
+      const Category = { category: category.category, id: category.id };
       // Calculate the total number of pages
       const pageSize = 20;
       const totalPages = Math.ceil(totalProducts / pageSize);
@@ -340,83 +346,92 @@ export class ProductsService {
         take: 20,
         skip: (query.page - 1) * 20,
       });
-      return { products, totalPages ,Category};
+      return { products, totalPages, Category };
     } catch (e) {
       throw new NotFoundException(e);
     }
   }
   async getForSubcategory(query) {
-    const totalProducts = await this.prisma.product.count({
-      where: {
-        subcategory: query.subcategory,
-      },
-    });
-    const subcategory = await this.prisma.subcategory.findFirst({
-      where: {
-        id: query.subcategory,
-      },
-    });
-    const Subcategory = {subcategory:subcategory.subcategory,id:subcategory.id}
-    const category = await this.prisma.category.findFirst({
-      where: {
-        id: subcategory.categoryId,
-      },
-    });
-    const Category = {category:category.category,id:category.id}
-    // Calculate the total number of pages
-    const pageSize = 20;
-    const totalPages = Math.ceil(totalProducts / pageSize);
-    const products = await this.prisma.product.findMany({
-      where: {
-        subcategory: query.subcategory,
-      },
-      take: 20,
-      skip: (query.page - 1) * 20,
-    });
-    return { products, totalPages, Category, Subcategory };
+    try {
+      const totalProducts = await this.prisma.product.count({
+        where: {
+          subcategory: query.subcategory,
+        },
+      });
+      const subcategory = await this.prisma.subcategory.findFirst({
+        where: {
+          id: query.subcategory,
+        },
+      });
+      const Subcategory = {
+        subcategory: subcategory.subcategory,
+        id: subcategory.id,
+      };
+      const category = await this.prisma.category.findFirst({
+        where: {
+          id: subcategory.categoryId,
+        },
+      });
+      const Category = { category: category.category, id: category.id };
+      // Calculate the total number of pages
+      const pageSize = 20;
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const products = await this.prisma.product.findMany({
+        where: {
+          subcategory: query.subcategory,
+        },
+        take: 20,
+        skip: (query.page - 1) * 20,
+      });
+      return { products, totalPages, Category, Subcategory };
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   async getForPromotions(query) {
-    const totalProducts = await this.prisma.product.count({
-      where: {
-        discount: {
-          gt: 0,
+    try {
+      const totalProducts = await this.prisma.product.count({
+        where: {
+          discount: {
+            gt: 0,
+          },
         },
-      },
-    });
-    const pageSize = 20;
-    const totalPages = Math.ceil(totalProducts / pageSize);
-    const skip = (query.page - 1) * pageSize;
-    // Получаем продукты с учетом пагинации и фильтрации по наличию скидки
-    const products = await this.prisma.product.findMany({
-      skip: skip,
-      take: pageSize,
-      where: {
-        discount: {
-          gt: 0,
+      });
+      const pageSize = 20;
+      const totalPages = Math.ceil(totalProducts / pageSize);
+      const skip = (query.page - 1) * pageSize;
+      // Получаем продукты с учетом пагинации и фильтрации по наличию скидки
+      const products = await this.prisma.product.findMany({
+        skip: skip,
+        take: pageSize,
+        where: {
+          discount: {
+            gt: 0,
+          },
         },
-      },
-    });
+      });
 
-    return { products, totalPages };
+      return { products, totalPages };
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
   async buy(dto) {
-    try{
-    const products = await this.prisma.product.findFirst({
-      where: {
-        id: dto.id,
-      },
-    });
-    console.log( dto.products,
-     dto.client)
-    const obj = {
-      products:dto.products,
-   client:dto.client
-    };
-    await emailSend.sendmessage({ products: obj });
-    return "al good";
-  } catch (e) {
-  throw new NotFoundException(e);
-}
+    try {
+      const products = await this.prisma.product.findFirst({
+        where: {
+          id: dto.id,
+        },
+      });
+      console.log(dto.products, dto.client);
+      const obj = {
+        products: dto.products,
+        client: dto.client,
+      };
+      await emailSend.sendmessage({ products: obj });
+      return "al good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
-
 }
