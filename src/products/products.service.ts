@@ -59,7 +59,9 @@ export class ProductsService {
         "The user with the given identifier was not found."
       );
     }
-
+ let deliveryMethodArr = dto.deliveryMethod;
+    let turningMethodArr = dto.turningMethod;
+    let discount=dto.discount;
     const uploadPromises = file.map(async (files) => {
       await uploadFile(files);
       return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
@@ -76,13 +78,15 @@ export class ProductsService {
     if (typeof dto.paymentMethod == "string") {
       paymentMethodArr = [dto.paymentMethod];
     }
-    let deliveryMethodArr = dto.deliveryMethod;
-    let turningMethodArr = dto.turningMethod;
+   
     if (typeof dto.turningMethod == "string") {
       turningMethodArr = [dto.turningMethod];
     }
     if (typeof dto.deliveryMethod == "string") {
       deliveryMethodArr = [dto.deliveryMethod];
+    }
+    if( Number(dto.discount)<0){
+      discount=0;
     }
     await this.prisma.product.create({
       data: {
@@ -101,7 +105,7 @@ export class ProductsService {
         turningMethod: turningMethodArr,
         deliveryMethod: deliveryMethodArr,
         article: article,
-        discount: Number(dto.discount),
+        discount:discount,
         long: dto.long,
         width: dto.width,
       },
@@ -120,7 +124,7 @@ export class ProductsService {
       }
       let arry = [];
       let oldImgArr = dto.oldImg;
-
+      let discount=dto.discount;
       if (file) {
         const uploadPromises = file.map(async (files) => {
           await uploadFile(files);
@@ -153,7 +157,9 @@ export class ProductsService {
       if (typeof dto.paymentMethod == "string") {
         paymentMethodArr = [dto.paymentMethod];
       }
-
+      if( Number(dto.discount)<0){
+        discount=0;
+      }
       console.log(dto.deliveryMethod);
       console.log(dto.deliveryMethod[2]);
       // console.log( deliveryMethodArr)
@@ -174,7 +180,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           country: dto.country,
-          discount: Number(dto.discount),
+          discount: discount,
           long: dto.long,
           width: dto.width,
         },
