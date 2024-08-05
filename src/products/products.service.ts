@@ -64,7 +64,7 @@ export class ProductsService {
     let discount=dto.discount;
     const uploadPromises = file.map(async (files) => {
       await uploadFile(files);
-      return `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`;
+      return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${files.originalname}`;
     });
 
     const arr = await Promise.all(uploadPromises);
@@ -129,7 +129,7 @@ export class ProductsService {
         const uploadPromises = file.map(async (files) => {
           await uploadFile(files);
           arry.push(
-            `https://faralaer.s3.eu-west-2.amazonaws.com/${files.originalname}`
+            `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${files.originalname}`
           );
         });
 

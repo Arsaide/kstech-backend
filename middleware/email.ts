@@ -16,7 +16,7 @@ class Emailsend {
   async sendmessage({ products }) {
     await this.transporter.sendMail({
       from: process.env.EMAIL,
-      to: "artemk2504@gmail.com",
+      to: process.env.EMAIL,
       subject: "Order Confirmation",
       html: `
         <div style="">
@@ -39,7 +39,7 @@ class Emailsend {
               (product) => `
             <div style="margin-bottom: 10px;">
               <p><strong>Product ID:</strong> ${product.id}</p>
-              <p><a href="https://kstech-frontend.vercel.app/catalog/subcatalog/product?id=${product.id}" style="color: blue; text-decoration: none;">View Product</a></p>
+              <p><a href="${process.env.FRONTEND_HOST}/catalog/subcatalog/product?id=${product.id}" style="color: blue; text-decoration: none;">View Product</a></p>
             </div>
           `
             )

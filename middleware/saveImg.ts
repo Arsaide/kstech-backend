@@ -37,5 +37,5 @@ export function uploadFile(file) {
 		ContentType: file.mimetype,
 	}
 	 s3.upload(params).promise()
-	 return `https://faralaer.s3.eu-west-2.amazonaws.com/${name}`
+	 return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${name}`
 }
