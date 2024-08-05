@@ -53,6 +53,7 @@ function getFile(fileName) {
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
   async create(file: Multer.File[], dto: createDto) {
+    try{
     const { user } = await verifyToken(dto.token, this.prisma);
     if (!user) {
       throw new NotFoundException(
@@ -112,6 +113,9 @@ export class ProductsService {
     });
 
     return "all good";
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async change(file: Multer.File[], dto: changeDto) {
@@ -235,6 +239,7 @@ export class ProductsService {
   }
 
   async get(page: number) {
+    try{
     const totalProducts = await this.prisma.product.count();
     const products = await this.prisma.product.findMany({
       take: 20,
@@ -247,6 +252,9 @@ export class ProductsService {
       products,
       totalPages,
     };
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async search(page: string, query: string) {
@@ -315,6 +323,7 @@ export class ProductsService {
   }
 
   async delete(id, token) {
+    try{
     const { user } = await verifyToken(token, this.prisma);
     if (!user) {
       throw new NotFoundException(
@@ -327,6 +336,9 @@ export class ProductsService {
         id: id,
       },
     });
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async getForCategory(query) {

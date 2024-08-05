@@ -25,6 +25,7 @@ interface IData {
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
   async createCategory(files, dto: createCategoryDto) {
+    try{
     const mainImgFile = files.mainImg ? files.mainImg[0] : null;
     const iconImgFile = files.iconImg ? files.iconImg[0] : null;
     const { user } = await verifyToken(dto.token, this.prisma);
@@ -54,6 +55,9 @@ export class CategoryService {
       },
     });
     return "all good";
+  } catch (e) {
+    throw new NotFoundException(e);
+  }
   }
 
   async getCategories() {
