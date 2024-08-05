@@ -25,39 +25,39 @@ interface IData {
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
   async createCategory(files, dto: createCategoryDto) {
-    try{
-    const mainImgFile = files.mainImg ? files.mainImg[0] : null;
-    const iconImgFile = files.iconImg ? files.iconImg[0] : null;
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
+    try {
+      const mainImgFile = files.mainImg ? files.mainImg[0] : null;
+      const iconImgFile = files.iconImg ? files.iconImg[0] : null;
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
 
-    const iconImg = uploadFile(iconImgFile);
-    const mainImg = uploadFile(mainImgFile);
+      const iconImg = uploadFile(iconImgFile);
+      const mainImg = uploadFile(mainImgFile);
 
-    const category = await this.prisma.category.findFirst({
-      where: {
-        category: dto.category,
-      },
-    });
-    if (category) {
-      throw new NotFoundException("this name is taken.");
+      const category = await this.prisma.category.findFirst({
+        where: {
+          category: dto.category,
+        },
+      });
+      if (category) {
+        throw new NotFoundException("this name is taken.");
+      }
+      await this.prisma.category.create({
+        data: {
+          category: dto.category,
+          mainImg: mainImg,
+          iconImg: iconImg,
+          subcategories: { create: [] },
+        },
+      });
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
     }
-    await this.prisma.category.create({
-      data: {
-        category: dto.category,
-        mainImg: mainImg,
-        iconImg: iconImg,
-        subcategories: { create: [] },
-      },
-    });
-    return "all good";
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
   }
 
   async getCategories() {
