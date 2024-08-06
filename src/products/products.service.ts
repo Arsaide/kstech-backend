@@ -155,7 +155,7 @@ export class ProductsService {
         for (let i = 0; i < dto.oldImg.length; i++) {
           arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
         }
-        console.log(arrdelete)
+        console.log(oldImgArr +"aaaa")
       //   if (arrdelete) {
       //     for (let i = 0; i < arrdelete.length; i++) {
       //       const uploadPromises = arrdelete.map(async (files) => {
