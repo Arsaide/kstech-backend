@@ -5,6 +5,7 @@ import * as Multer from "multer";
 import verifyToken from "middleware/verifyToken";
 import generateUniqueArticle from "middleware/generateartcile";
 import { contains } from "class-validator";
+import { deleteFile, uploadFile } from "middleware/saveImg";
 // import {uploadFile} from "../../middleware/create"
 require("dotenv").config();
 const fs = require("fs");
@@ -21,15 +22,15 @@ const s3 = new S3({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
 });
-function uploadFile(file) {
-  const params = {
-    Bucket: bucketName,
-    Key: file.originalname,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
-  return s3.upload(params).promise();
-}
+// function uploadFile(file) {
+//   const params = {
+//     Bucket: bucketName,
+//     Key: file.originalname,
+//     Body: file.buffer,
+//     ContentType: file.mimetype,
+//   };
+//   return s3.upload(params).promise();
+// }
 
 // function deleteFile(fileName) {
 //   const params = {
@@ -53,69 +54,69 @@ function getFile(fileName) {
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
   async create(file: Multer.File[], dto: createDto) {
-    try{
-    const { user } = await verifyToken(dto.token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
-    }
- let deliveryMethodArr = dto.deliveryMethod;
-    let turningMethodArr = dto.turningMethod;
-    let discount=dto.discount;
-    const uploadPromises = file.map(async (files) => {
-      await uploadFile(files);
-      return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${files.originalname}`;
-    });
+    try {
+      const { user } = await verifyToken(dto.token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      let deliveryMethodArr = dto.deliveryMethod;
+      let turningMethodArr = dto.turningMethod;
+      let discount = dto.discount;
+      const uploadPromises = file.map(async (files) => {
+        const link = await uploadFile(files);
+        return link;
+      });
 
-    const arr = await Promise.all(uploadPromises);
-    const article = generateUniqueArticle();
-    let colorArr = dto.colors;
-    if (typeof dto.colors == "string") {
-      colorArr = [dto.colors];
-    }
-    let paymentMethodArr = dto.paymentMethod;
-    // const deliveryMethodArr = dto.deliveryMethod.split(",")
-    if (typeof dto.paymentMethod == "string") {
-      paymentMethodArr = [dto.paymentMethod];
-    }
-   
-    if (typeof dto.turningMethod == "string") {
-      turningMethodArr = [dto.turningMethod];
-    }
-    if (typeof dto.deliveryMethod == "string") {
-      deliveryMethodArr = [dto.deliveryMethod];
-    }
-    if( Number(dto.discount)<0){
-      discount=0;
-    }
-    await this.prisma.product.create({
-      data: {
-        name: dto.name,
-        colors: colorArr,
-        description: dto.description,
-        price: Number(dto.price),
-        inAvailability: dto.inAvailability,
-        category: dto.category,
-        subcategory: dto.subcategory,
-        weight: dto.weight,
-        height: dto.height,
-        imgArr: arr,
-        country: dto.country,
-        paymentMethod: paymentMethodArr,
-        turningMethod: turningMethodArr,
-        deliveryMethod: deliveryMethodArr,
-        article: article,
-        discount:discount,
-        long: dto.long,
-        width: dto.width,
-      },
-    });
+      const arr = await Promise.all(uploadPromises);
+      const article = generateUniqueArticle();
+      let colorArr = dto.colors;
+      if (typeof dto.colors == "string") {
+        colorArr = [dto.colors];
+      }
+      let paymentMethodArr = dto.paymentMethod;
+      // const deliveryMethodArr = dto.deliveryMethod.split(",")
+      if (typeof dto.paymentMethod == "string") {
+        paymentMethodArr = [dto.paymentMethod];
+      }
 
-    return "all good";
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
+      if (typeof dto.turningMethod == "string") {
+        turningMethodArr = [dto.turningMethod];
+      }
+      if (typeof dto.deliveryMethod == "string") {
+        deliveryMethodArr = [dto.deliveryMethod];
+      }
+      if (Number(dto.discount) < 0) {
+        discount = 0;
+      }
+      await this.prisma.product.create({
+        data: {
+          name: dto.name,
+          colors: colorArr,
+          description: dto.description,
+          price: Number(dto.price),
+          inAvailability: dto.inAvailability,
+          category: dto.category,
+          subcategory: dto.subcategory,
+          weight: dto.weight,
+          height: dto.height,
+          imgArr: arr,
+          country: dto.country,
+          paymentMethod: paymentMethodArr,
+          turningMethod: turningMethodArr,
+          deliveryMethod: deliveryMethodArr,
+          article: article,
+          discount: discount,
+          long: dto.long,
+          width: dto.width,
+        },
+      });
+
+      return "all good";
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async change(file: Multer.File[], dto: changeDto) {
@@ -128,13 +129,11 @@ export class ProductsService {
       }
       let arry = [];
       let oldImgArr = dto.oldImg;
-      let discount=dto.discount;
+      let discount = dto.discount;
       if (file) {
         const uploadPromises = file.map(async (files) => {
-          await uploadFile(files);
-          arry.push(
-            `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${files.originalname}`
-          );
+          const link = await uploadFile(files);
+          arry.push(link);
         });
 
         await Promise.all(uploadPromises);
@@ -161,8 +160,8 @@ export class ProductsService {
       if (typeof dto.paymentMethod == "string") {
         paymentMethodArr = [dto.paymentMethod];
       }
-      if( Number(dto.discount)<0){
-        discount=0;
+      if (Number(dto.discount) < 0) {
+        discount = 0;
       }
       console.log(dto.deliveryMethod);
       console.log(dto.deliveryMethod[2]);
@@ -239,22 +238,22 @@ export class ProductsService {
   }
 
   async get(page: number) {
-    try{
-    const totalProducts = await this.prisma.product.count();
-    const products = await this.prisma.product.findMany({
-      take: 20,
-      skip: (page - 1) * 20,
-    });
-    const productsPerPage = 20;
-    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    try {
+      const totalProducts = await this.prisma.product.count();
+      const products = await this.prisma.product.findMany({
+        take: 20,
+        skip: (page - 1) * 20,
+      });
+      const productsPerPage = 20;
+      const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-    return {
-      products,
-      totalPages,
-    };
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
+      return {
+        products,
+        totalPages,
+      };
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 
   async search(page: string, query: string) {
@@ -323,22 +322,30 @@ export class ProductsService {
   }
 
   async delete(id, token) {
-    try{
-    const { user } = await verifyToken(token, this.prisma);
-    if (!user) {
-      throw new NotFoundException(
-        "The user with the given identifier was not found."
-      );
+    try {
+      const { user } = await verifyToken(token, this.prisma);
+      if (!user) {
+        throw new NotFoundException(
+          "The user with the given identifier was not found."
+        );
+      }
+      const product = await this.prisma.product.findFirst({
+        where: {
+          id: id,
+        },
+      });
+      const uploadPromises = product.imgArr.map(async (files) => {
+        await deleteFile(files)
+      });
+      await Promise.all(uploadPromises);
+      await this.prisma.product.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (e) {
+      throw new NotFoundException(e);
     }
-
-    await this.prisma.product.delete({
-      where: {
-        id: id,
-      },
-    });
-  } catch (e) {
-    throw new NotFoundException(e);
-  }
   }
 
   async getForCategory(query) {
