@@ -156,7 +156,7 @@ export class ProductsService {
           arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
         }
         if (arrdelete) {
-          for (let i = 0; i < arguments.length; i++) {
+          for (let i = 0; i < arrdelete.length; i++) {
             const uploadPromises = arrdelete.map(async (files) => {
               await deleteFile(files);
             });
