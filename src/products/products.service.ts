@@ -63,7 +63,7 @@ export class ProductsService {
       }
       let deliveryMethodArr = dto.deliveryMethod;
       let turningMethodArr = dto.turningMethod;
-      let discount = dto.discount;
+      let discount = Number(dto.discount);
       let arr = [];
       const uploadPromises = file.map(async (files) => {
      
@@ -113,7 +113,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           article: article,
-          discount:Number(discount),
+          discount:discount,
           long: dto.long,
           width: dto.width,
         },
