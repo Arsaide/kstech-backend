@@ -155,6 +155,8 @@ export class ProductsService {
         for (let i = 0; i < arrOldDelte.length; i++) {
           arrdelete = product.imgArr.filter((element) => element != arrOldDelte[i]);
         }
+        console.log("oldImgArr"+oldImgArr)
+        console.log("roduct.imgArr"+product.imgArr)
    console.log(arrOldDelte)
         if (arrdelete) {
           for (let i = 0; i < arrdelete.length; i++) {
