@@ -93,7 +93,7 @@ export class ProductsService {
         deliveryMethodArr = [dto.deliveryMethod];
       }
       if (Number(dto.discount) < 0) {
-        discount = 0;
+        discount = Number(0);
       }
       console.log(dto.description)
       await this.prisma.product.create({
@@ -113,7 +113,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           article: article,
-          discount:discount,
+          discount:Number(discount),
           long: dto.long,
           width: dto.width,
         },

@@ -12,9 +12,14 @@ export class createDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  
+  @IsString()
+  @IsNotEmpty()
   description: string;
+  @IsString()
+  @IsNotEmpty()
   inAvailability: string;
+  @IsString()
+  @IsNotEmpty()
   category: string;
   subcategory: string;
   weight: string;
