@@ -151,7 +151,7 @@ export class ProductsService {
       });
       if (dto.oldImg) {
         let arrdelete;
-        let arrOldDelte=[...oldImgArr]
+        let arrOldDelte=oldImgArr.split(',');
         for (let i = 0; i < arrOldDelte.length; i++) {
           arrdelete = product.imgArr.filter((element) => element != arrOldDelte[i]);
         }
@@ -166,6 +166,7 @@ export class ProductsService {
             await Promise.all(uploadPromises);
           }
         }
+        
       }  else {
         const uploadPromises = product.imgArr.map(async (files) => {
           await deleteFile(files);
