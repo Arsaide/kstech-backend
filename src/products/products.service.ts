@@ -141,7 +141,7 @@ export class ProductsService {
         const uploadPromises = file.map(async (files) => {
           const link = await uploadFile(files);
           arry.push(link);
-          console.log(link)
+         
         });
 
         await Promise.all(uploadPromises);
@@ -150,14 +150,14 @@ export class ProductsService {
         where: { id: dto.id },
       });
       if (dto.oldImg) {
-        let arr;
+        let arrdelete;
 
         for (let i = 0; i < dto.oldImg.length; i++) {
-          arr = product.imgArr.filter((element) => element != dto.oldImg[i]);
+          arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
         }
-        if (arr) {
+        if (arrdelete) {
           for (let i = 0; i < arguments.length; i++) {
-            const uploadPromises = arr.map(async (files) => {
+            const uploadPromises = arrdelete.map(async (files) => {
               await deleteFile(files);
             });
             await Promise.all(uploadPromises);
