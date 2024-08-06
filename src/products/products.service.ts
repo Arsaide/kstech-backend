@@ -148,17 +148,15 @@ export class ProductsService {
         where: { id: dto.id },
       });
       if (dto.oldImg) {
-        let arrdelete;
-        let arrOldDelte:any = oldImgArr;
-        if (typeof oldImgArr == "string") {
-         console.log("work");
-          arrOldDelte = oldImgArr.split(",");
-        }
-        for (let i = 0; i < arrOldDelte.length; i++) {
-          arrdelete = product.imgArr.filter(
-            (element) => element != arrOldDelte[i]
-          );
-        }
+        let arrOldDelte: string[] = Array.isArray(oldImgArr) ? oldImgArr : oldImgArr.split(",");
+    
+       
+        const arrdelete = product.imgArr.filter(
+            (element) => !arrOldDelte.includes(element)
+        );
+    
+       
+    
      console.log(arrdelete)  
         if (arrdelete) {
           for (let i = 0; i < arrdelete.length; i++) {
