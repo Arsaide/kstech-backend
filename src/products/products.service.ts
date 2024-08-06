@@ -174,7 +174,8 @@ export class ProductsService {
         await Promise.all(uploadPromises);
       }
       if (oldImgArr) {
-        arry = [...arry, ...oldImgArr];
+        const old=oldImgArr.split('/')
+        arry = [...arry, ...old];
       }
 
       let colorArr = dto.colors;
