@@ -12,7 +12,7 @@ export class createDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
+  
   description: string;
   inAvailability: string;
   category: string;
