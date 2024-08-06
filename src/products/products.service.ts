@@ -141,6 +141,7 @@ export class ProductsService {
         const uploadPromises = file.map(async (files) => {
           const link = await uploadFile(files);
           arry.push(link);
+          console.log(link)
         });
 
         await Promise.all(uploadPromises);
