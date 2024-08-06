@@ -66,13 +66,11 @@ export class ProductsService {
       let discount = Number(dto.discount);
       let arr = [];
       const uploadPromises = file.map(async (files) => {
-     
-      
         const link = await uploadFile(files);
-        console.log(link)
+        console.log(link);
         arr.push(link);
       });
-      
+
       await Promise.all(uploadPromises);
       console.log(arr);
       const article = generateUniqueArticle();
@@ -95,7 +93,7 @@ export class ProductsService {
       if (Number(dto.discount) < 0) {
         discount = Number(0);
       }
-      console.log(dto.description)
+      console.log(dto.description);
       await this.prisma.product.create({
         data: {
           name: dto.name,
@@ -113,7 +111,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           article: article,
-          discount:discount,
+          discount: discount,
           long: dto.long,
           width: dto.width,
         },
@@ -121,7 +119,7 @@ export class ProductsService {
 
       return "all good";
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new NotFoundException(e);
     }
   }
@@ -134,7 +132,7 @@ export class ProductsService {
           "The user with the given identifier was not found."
         );
       }
-      console.log(dto.oldImg)
+      console.log(dto.oldImg);
       let arry = [];
       let oldImgArr = dto.oldImg;
       let discount = dto.discount;
@@ -142,7 +140,6 @@ export class ProductsService {
         const uploadPromises = file.map(async (files) => {
           const link = await uploadFile(files);
           arry.push(link);
-         
         });
 
         await Promise.all(uploadPromises);
@@ -152,13 +149,19 @@ export class ProductsService {
       });
       if (dto.oldImg) {
         let arrdelete;
-        let arrOldDelte=oldImgArr.split(',');
-        for (let i = 0; i < arrOldDelte.length; i++) {
-          arrdelete = product.imgArr.filter((element) => element != arrOldDelte[i]);
+        let arrOldDelte:any = oldImgArr;
+        if (typeof oldImgArr == "string") {
+         console.log("work");
+          arrOldDelte = oldImgArr.split(",");
         }
-        console.log("oldImgArr"+oldImgArr)
-        console.log("roduct.imgArr"+product.imgArr)
-   console.log(arrOldDelte)
+        for (let i = 0; i < arrOldDelte.length; i++) {
+          arrdelete = product.imgArr.filter(
+            (element) => element != arrOldDelte[i]
+          );
+        }
+        console.log("oldImgArr" + oldImgArr);
+        console.log("roduct.imgArr" + product.imgArr);
+        console.log(arrOldDelte);
         if (arrdelete) {
           for (let i = 0; i < arrdelete.length; i++) {
             const uploadPromises = arrdelete.map(async (files) => {
@@ -167,20 +170,21 @@ export class ProductsService {
             await Promise.all(uploadPromises);
           }
         }
-        
-      }  else {
+      } else {
         const uploadPromises = product.imgArr.map(async (files) => {
           await deleteFile(files);
         });
         await Promise.all(uploadPromises);
       }
       if (oldImgArr) {
-        
-        const old=oldImgArr.split(',')
-        console.log(oldImgArr)
-        
+        let old:any = oldImgArr;
+        if (typeof oldImgArr == "string") {
+         console.log("work");
+          old= oldImgArr.split(",");
+        }
+
         arry = [...arry, ...old];
-        console.log('arry'+arry)
+        console.log("arry" + arry);
       }
 
       let colorArr = dto.colors;
@@ -223,7 +227,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           country: dto.country,
-          discount:  Number(discount),
+          discount: Number(discount),
           long: dto.long,
           width: dto.width,
         },
@@ -231,7 +235,7 @@ export class ProductsService {
 
       return "all good";
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new NotFoundException(e);
     }
   }
