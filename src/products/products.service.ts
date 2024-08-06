@@ -146,15 +146,16 @@ export class ProductsService {
 
         await Promise.all(uploadPromises);
       }
-      // const product = await this.prisma.product.findFirst({
-      //   where: { id: dto.id },
-      // });
-      // if (dto.oldImg) {
-      //   let arrdelete;
+      const product = await this.prisma.product.findFirst({
+        where: { id: dto.id },
+      });
+      if (dto.oldImg) {
+        let arrdelete;
 
-      //   for (let i = 0; i < dto.oldImg.length; i++) {
-      //     arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
-      //   }
+        for (let i = 0; i < dto.oldImg.length; i++) {
+          arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
+        }
+        console.log(arrdelete)
       //   if (arrdelete) {
       //     for (let i = 0; i < arrdelete.length; i++) {
       //       const uploadPromises = arrdelete.map(async (files) => {
@@ -163,12 +164,12 @@ export class ProductsService {
       //       await Promise.all(uploadPromises);
       //     }
       //   }
-      // } else {
-      //   const uploadPromises = product.imgArr.map(async (files) => {
-      //     await deleteFile(files);
-      //   });
-      //   await Promise.all(uploadPromises);
-      // }
+      }  else {
+        const uploadPromises = product.imgArr.map(async (files) => {
+          await deleteFile(files);
+        });
+        await Promise.all(uploadPromises);
+      }
       if (oldImgArr) {
         arry = [...arry, ...oldImgArr];
       }
