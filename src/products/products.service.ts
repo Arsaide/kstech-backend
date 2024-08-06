@@ -151,19 +151,19 @@ export class ProductsService {
       });
       if (dto.oldImg) {
         let arrdelete;
-
-        for (let i = 0; i < dto.oldImg.length; i++) {
-          arrdelete = product.imgArr.filter((element) => element != dto.oldImg[i]);
+        let arrOldDelte=[...oldImgArr]
+        for (let i = 0; i < arrOldDelte.length; i++) {
+          arrdelete = product.imgArr.filter((element) => element != arrOldDelte[i]);
         }
-        console.log(oldImgArr +"aaaa")
-      //   if (arrdelete) {
-      //     for (let i = 0; i < arrdelete.length; i++) {
-      //       const uploadPromises = arrdelete.map(async (files) => {
-      //         await deleteFile(files);
-      //       });
-      //       await Promise.all(uploadPromises);
-      //     }
-      //   }
+   
+        if (arrdelete) {
+          for (let i = 0; i < arrdelete.length; i++) {
+            const uploadPromises = arrdelete.map(async (files) => {
+              await deleteFile(files);
+            });
+            await Promise.all(uploadPromises);
+          }
+        }
       }  else {
         const uploadPromises = product.imgArr.map(async (files) => {
           await deleteFile(files);
