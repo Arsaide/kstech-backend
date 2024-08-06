@@ -175,7 +175,10 @@ export class ProductsService {
       }
       if (oldImgArr) {
         const old=oldImgArr.split('/')
+        console.log(oldImgArr)
+        console.log(old)
         arry = [...arry, ...old];
+        console.log('arry'+arry)
       }
 
       let colorArr = dto.colors;
