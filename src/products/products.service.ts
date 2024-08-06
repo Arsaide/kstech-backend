@@ -159,9 +159,7 @@ export class ProductsService {
             (element) => element != arrOldDelte[i]
           );
         }
-        console.log("oldImgArr" + oldImgArr);
-        console.log("roduct.imgArr" + product.imgArr);
-        console.log(arrOldDelte);
+     console.log(arrdelete)  
         if (arrdelete) {
           for (let i = 0; i < arrdelete.length; i++) {
             const uploadPromises = arrdelete.map(async (files) => {
@@ -182,7 +180,7 @@ export class ProductsService {
          console.log("work");
           old= oldImgArr.split(",");
         }
-
+            console.log(old)
         arry = [...arry, ...old];
         console.log("arry" + arry);
       }
