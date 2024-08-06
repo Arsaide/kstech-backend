@@ -174,7 +174,7 @@ export class ProductsService {
         await Promise.all(uploadPromises);
       }
       if (oldImgArr) {
-        const old=oldImgArr.split('/')
+        const old=oldImgArr.split(',')
         console.log(oldImgArr)
         console.log(old)
         arry = [...arry, ...old];
