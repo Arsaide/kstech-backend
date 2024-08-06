@@ -212,7 +212,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           country: dto.country,
-          discount: discount,
+          discount:  Number(discount),
           long: dto.long,
           width: dto.width,
         },
