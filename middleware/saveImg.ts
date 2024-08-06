@@ -37,5 +37,6 @@ export function uploadFile(file) {
 		ContentType: file.mimetype,
 	}
 	 s3.upload(params).promise()
+	console.log(name)
 	 return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${name}`
 }

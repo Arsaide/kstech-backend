@@ -64,13 +64,17 @@ export class ProductsService {
       let deliveryMethodArr = dto.deliveryMethod;
       let turningMethodArr = dto.turningMethod;
       let discount = dto.discount;
-      let arr=[]
+      let arr = [];
       const uploadPromises = file.map(async (files) => {
+     
+      
         const link = await uploadFile(files);
+        console.log(link)
         arr.push(link);
       });
-
-       await Promise.all(uploadPromises);
+      
+      await Promise.all(uploadPromises);
+      console.log(arr);
       const article = generateUniqueArticle();
       let colorArr = dto.colors;
       if (typeof dto.colors == "string") {
@@ -91,6 +95,7 @@ export class ProductsService {
       if (Number(dto.discount) < 0) {
         discount = 0;
       }
+      console.log(dto.description)
       await this.prisma.product.create({
         data: {
           name: dto.name,
@@ -108,7 +113,7 @@ export class ProductsService {
           turningMethod: turningMethodArr,
           deliveryMethod: deliveryMethodArr,
           article: article,
-          discount: discount,
+          discount:discount,
           long: dto.long,
           width: dto.width,
         },
@@ -116,6 +121,7 @@ export class ProductsService {
 
       return "all good";
     } catch (e) {
+      console.log(e)
       throw new NotFoundException(e);
     }
   }
@@ -139,28 +145,26 @@ export class ProductsService {
 
         await Promise.all(uploadPromises);
       }
-      const product=await this.prisma.product.findFirst({
+      const product = await this.prisma.product.findFirst({
         where: { id: dto.id },
-      })
-      if(dto.oldImg){
+      });
+      if (dto.oldImg) {
         let arr;
 
-        for(let i=0;i<dto.oldImg.length;i++){
-        arr= product.imgArr.filter(element=>element!=dto.oldImg[i])
-        
+        for (let i = 0; i < dto.oldImg.length; i++) {
+          arr = product.imgArr.filter((element) => element != dto.oldImg[i]);
         }
-        if(arr){
-           for(let i=0;i<arguments.length;i++){
-            const uploadPromises =arr.map(async (files) => {
-              await deleteFile(files)
+        if (arr) {
+          for (let i = 0; i < arguments.length; i++) {
+            const uploadPromises = arr.map(async (files) => {
+              await deleteFile(files);
             });
             await Promise.all(uploadPromises);
-           }
+          }
         }
-        
-      }else{
+      } else {
         const uploadPromises = product.imgArr.map(async (files) => {
-          await deleteFile(files)
+          await deleteFile(files);
         });
         await Promise.all(uploadPromises);
       }
@@ -190,7 +194,7 @@ export class ProductsService {
       }
       console.log(dto.deliveryMethod);
       console.log(dto.deliveryMethod[2]);
-    
+
       await this.prisma.product.update({
         where: { id: dto.id },
         data: {
@@ -360,7 +364,7 @@ export class ProductsService {
         },
       });
       const uploadPromises = product.imgArr.map(async (files) => {
-        await deleteFile(files)
+        await deleteFile(files);
       });
       await Promise.all(uploadPromises);
       await this.prisma.product.delete({
