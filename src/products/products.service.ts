@@ -64,12 +64,13 @@ export class ProductsService {
       let deliveryMethodArr = dto.deliveryMethod;
       let turningMethodArr = dto.turningMethod;
       let discount = dto.discount;
+      let arr=[]
       const uploadPromises = file.map(async (files) => {
         const link = await uploadFile(files);
-        return link;
+        arr.push(link);
       });
 
-      const arr = await Promise.all(uploadPromises);
+       await Promise.all(uploadPromises);
       const article = generateUniqueArticle();
       let colorArr = dto.colors;
       if (typeof dto.colors == "string") {
