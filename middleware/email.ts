@@ -37,7 +37,7 @@ class Emailsend {
           ${products.products.map(product => `
             <div style="margin-bottom: 10px;">
               <p><strong>ID продукту:</strong> ${product.id}</p>
-              <p><a href="https://kstech-frontend.vercel.app/catalog/subcatalog/product?id=${product.id}" style="color: blue; text-decoration: none;">Переглянути продукт</a></p>
+              <p><a href="${process.env.FRONTEND_HOST}/catalog/subcatalog/${product.id}" style="color: blue; text-decoration: none;">Переглянути продукт</a></p>
             </div>
           `).join('')}
           
