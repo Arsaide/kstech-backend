@@ -150,7 +150,7 @@ export class CategoryService {
         Array.isArray(files.mainImg) &&
         files.mainImg.length > 0
       ) {
-        console.log(files);
+        
         const mainImgFile = files.mainImg ? files.mainImg[0] : null;
         const iconImgFile = files.iconImg ? files.iconImg[0] : null;
         deleteFile(category.iconImg);

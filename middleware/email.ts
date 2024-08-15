@@ -16,7 +16,7 @@ class Emailsend {
   async sendmessage({ products }) {
     await this.transporter.sendMail({
       from: process.env.EMAIL,
-      to: "artemk2504@gmail.com",
+      to: process.env.EMAIL,
       subject: "Підтвердження замовлення",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">

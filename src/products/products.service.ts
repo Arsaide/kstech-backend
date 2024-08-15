@@ -67,12 +67,12 @@ export class ProductsService {
       let arr = [];
       const uploadPromises = file.map(async (files) => {
         const link = await uploadFile(files);
-        console.log(link);
+
         arr.push(link);
       });
 
       await Promise.all(uploadPromises);
-      console.log(arr);
+
       const article = generateUniqueArticle();
       let colorArr = dto.colors;
       if (typeof dto.colors == "string") {
@@ -93,7 +93,7 @@ export class ProductsService {
       if (Number(dto.discount) < 0) {
         discount = Number(0);
       }
-      console.log(dto.description);
+
       await this.prisma.product.create({
         data: {
           name: dto.name,
@@ -119,7 +119,6 @@ export class ProductsService {
 
       return "all good";
     } catch (e) {
-      console.log(e);
       throw new NotFoundException(e);
     }
   }
@@ -132,7 +131,7 @@ export class ProductsService {
           "The user with the given identifier was not found."
         );
       }
-      console.log(dto.oldImg);
+
       let arry = [];
       let oldImgArr = dto.oldImg;
       let discount = dto.discount;
@@ -148,16 +147,14 @@ export class ProductsService {
         where: { id: dto.id },
       });
       if (dto.oldImg) {
-        let arrOldDelte: string[] = Array.isArray(oldImgArr) ? oldImgArr : oldImgArr.split(",");
-    
-       
+        let arrOldDelte: string[] = Array.isArray(oldImgArr)
+          ? oldImgArr
+          : oldImgArr.split(",");
+
         const arrdelete = product.imgArr.filter(
-            (element) => !arrOldDelte.includes(element)
+          (element) => !arrOldDelte.includes(element)
         );
-    
-       
-    
-     console.log(arrdelete)  
+
         if (arrdelete) {
           for (let i = 0; i < arrdelete.length; i++) {
             const uploadPromises = arrdelete.map(async (files) => {
@@ -173,14 +170,12 @@ export class ProductsService {
         await Promise.all(uploadPromises);
       }
       if (oldImgArr) {
-        let old:any = oldImgArr;
+        let old: any = oldImgArr;
         if (typeof oldImgArr == "string") {
-         console.log("work");
-          old= oldImgArr.split(",");
+          old = oldImgArr.split(",");
         }
-            console.log(old)
+
         arry = [...arry, ...old];
-        console.log("arry" + arry);
       }
 
       let colorArr = dto.colors;
@@ -203,8 +198,6 @@ export class ProductsService {
       if (Number(dto.discount) < 0) {
         discount = 0;
       }
-      console.log(dto.deliveryMethod);
-      console.log(dto.deliveryMethod[2]);
 
       await this.prisma.product.update({
         where: { id: dto.id },
@@ -231,7 +224,6 @@ export class ProductsService {
 
       return "all good";
     } catch (e) {
-      console.log(e);
       throw new NotFoundException(e);
     }
   }
@@ -328,7 +320,7 @@ export class ProductsService {
       });
 
       totalPages = Math.ceil(totalProducts / 20);
-      console.log(query);
+
       products = await this.prisma.product.findMany({
         where: {
           OR: [
@@ -489,7 +481,7 @@ export class ProductsService {
           id: dto.id,
         },
       });
-      console.log(dto.products, dto.client);
+
       const obj = {
         products: dto.products,
         client: dto.client,
