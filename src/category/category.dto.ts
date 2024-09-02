@@ -38,6 +38,6 @@ export class deleteCategoryDto{
 export class deleteSubcategoryDto{
 	@IsString()
 	@IsNotEmpty()
-	id:string;
+	subcategory:string;
 	token:string
 }
