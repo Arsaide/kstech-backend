@@ -273,7 +273,7 @@ export class CategoryService {
       if (subcategory) {
         for (let i = 0; i < (await subcategory.length); i++) {
           deleteFile(subcategory[i].mainImg);
-          deleteFile(subcategory[i].iconImg);
+          deleteFile(subcategory[i ].iconImg);
         }
       }
       deleteFile(category.mainImg);
