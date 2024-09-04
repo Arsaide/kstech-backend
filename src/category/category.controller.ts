@@ -6,7 +6,7 @@ import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestj
 const multer = Multer({
 	storage: Multer.memoryStorage(),
 	limits: {
-		fileSize: 5 * 1024 * 1024, // No larger than 5mb
+		fileSize: 10* 1024 * 1024, // No larger than 5mb
 	},
 })
 @Controller('category')
